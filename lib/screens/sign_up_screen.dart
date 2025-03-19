@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'welcome_screen.dart';
+
+class SignUpScreen extends StatefulWidget {
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildTextField('이름', false),
+            SizedBox(height: 16),
+            _buildTextField('아이디', false),
+            SizedBox(height: 16),
+            _buildTextField('비밀번호', true),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                minimumSize: Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text('가입하기', style: TextStyle(color: Colors.white, fontSize: 18)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, bool isPassword) {
+    return TextField(
+      obscureText: isPassword ? _obscureText : false,
+      style: TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.blue),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        suffixIcon: isPassword
+            ? IconButton(
+          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Colors.white),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        )
+            : null,
+      ),
+    );
+  }
+}

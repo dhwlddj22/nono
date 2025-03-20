@@ -14,17 +14,27 @@ class WelcomeScreen extends StatelessWidget {
           children: [
             Text(
               '층간소음 걱정 없이 편안한 하루를!',
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontFamily: 'Pretendard', // Pretendard 폰트 적용
+                fontWeight: FontWeight.w700, // Bold (700)
+              ),
+              textAlign: TextAlign.left,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 22),
             Text(
               '지금부터 소음 문제 해결을 위한\n스마트한 기능을 경험해 보세요! 🎉',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontFamily: 'Pretendard', // Pretendard 폰트 적용
+                fontWeight: FontWeight.w700, // Bold (700)
+              ),
+              textAlign: TextAlign.left,
             ),
             SizedBox(height: 40),
-            Image.asset('assets/thumbs_up.png', width: 100), // 👍 이모지 이미지
+            Image.asset('assets/thumbs_up.png', width: 120), // 👍 이모지 이미지
             SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {

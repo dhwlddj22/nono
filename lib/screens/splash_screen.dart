@@ -36,7 +36,11 @@ class _SplashScreenState extends State<SplashScreen> {
                   SizedBox(height: 20),
                   Text(
                     '스마트한 층간소음 해결',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(color: Colors.white,
+                        fontSize: 20,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -48,11 +52,12 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'NOISE GUARD',
+                  'NO!SE GUARD',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 SizedBox(height: 30),

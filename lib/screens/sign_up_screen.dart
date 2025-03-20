@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'welcome_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -7,7 +8,27 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   bool _obscureText = true;
+
+  Future<void> _signUp() async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WelcomeScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('회원가입 실패: ${e.toString()}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +40,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildTextField('이름', false),
+            _buildTextField('이름', _nameController, false),
             SizedBox(height: 16),
-            _buildTextField('아이디', false),
+            _buildTextField('이메일', _emailController, false),
             SizedBox(height: 16),
-            _buildTextField('비밀번호', true),
+            _buildTextField('비밀번호', _passwordController, true),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => WelcomeScreen()),
-                );
-              },
+              onPressed: _signUp,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 minimumSize: Size(double.infinity, 50),
@@ -47,27 +63,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildTextField(String label, bool isPassword) {
+  Widget _buildTextField(String label, TextEditingController controller, bool isPassword) {
     return TextField(
+      controller: controller,
       obscureText: isPassword ? _obscureText : false,
       style: TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.blue),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
         suffixIcon: isPassword
             ? IconButton(
           icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Colors.white),
-          onPressed: () {
-            setState(() {
-              _obscureText = !_obscureText;
-            });
-          },
+          onPressed: () => setState(() => _obscureText = !_obscureText),
         )
             : null,
       ),

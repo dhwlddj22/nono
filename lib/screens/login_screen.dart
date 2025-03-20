@@ -11,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true;
+  bool _obscureText = true; // 비밀번호 가리기 여부
 
   Future<void> _login() async {
     try {
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset('assets/logo.png', width: 120),
+            Image.asset('assets/logo.png', width: 135),
             SizedBox(height: 40),
             _buildTextField('이메일', _emailController, false),
             SizedBox(height: 16),
@@ -51,7 +51,9 @@ class _LoginScreenState extends State<LoginScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 minimumSize: Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: Text('로그인', style: TextStyle(color: Colors.white, fontSize: 18)),
             ),
@@ -82,8 +84,22 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.blue),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        suffixIcon: isPassword
+            ? IconButton(
+          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Colors.white),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        )
+            : null,
       ),
     );
   }

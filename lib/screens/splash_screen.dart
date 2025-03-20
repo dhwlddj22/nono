@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset('assets/logo.png', width: 200), // 로고 이미지
+                  Image.asset('assets/logo.png', width: 270), // 로고 이미지
                   SizedBox(height: 20),
                   Text(
                     '스마트한 층간소음 해결',

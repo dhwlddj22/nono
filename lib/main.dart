@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // ✅ Firebase 추가
 import 'screens/splash_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,13 +19,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue, // ✅ 기본 색상 설정
-        fontFamily: 'Pretendard',   // ✅ Pretendard 폰트 적용
-        textTheme: TextTheme(
-          bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
-          bodyMedium: TextStyle(fontSize: 14, color: Colors.white70),
         ),
+        fontFamily: 'Pretendard', // 앱 전체에 Pretendard 폰트 적용
+        brightness: Brightness.dark, // 기존의 다크 테마 유지
       ),
       home: SplashScreen(),
     );

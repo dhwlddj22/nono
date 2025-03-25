@@ -1,62 +1,48 @@
 import 'package:flutter/material.dart';
-import 'community_screen.dart'; // ← 반드시 import 해줘
+import 'noise_analysis_screen.dart';
+import 'report_screen.dart';
+import 'board_screen.dart';
+// import 'legal_screen.dart';
+// import 'market_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 2; // 기본값: AI 소음 측정 페이지
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CommunityScreen()),
-      );
-    }
-  }
+  final List<Widget> _pages = [
+    ReportScreen(),
+    BoardScreen(),
+    NoiseAnalysisChatScreen(), // AI 소음 측정 (기본 화면)
+    // LegalScreen(),
+    // MarketScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(
-          'NO!SE GUARD',
-          style: TextStyle(letterSpacing: 1.2),
-        ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings, color: Colors.white),
-            onPressed: () {},
-          ),
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: [
+          _buildNavItem(Icons.lightbulb_outline, "원터치 신고"),
+          _buildNavItem(Icons.chat_bubble_outline, "소음게시판"),
+          _buildNavItem(Icons.adb, "AI소음측정"),
+          _buildNavItem(Icons.gavel, "법률지원"),
+          _buildNavItem(Icons.shopping_bag_outlined, "소음마켓"),
         ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.graphic_eq, size: 60, color: Colors.green),
-            SizedBox(height: 20),
-            Text(
-              '스마트한 층간소음 해결, 노이즈가드',
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            SizedBox(height: 8),
-            Text(
-              '녹음파일을 넣어 소음을 분석해보세요.',
-              style: TextStyle(color: Colors.green, fontSize: 14),
-            ),
-          ],
-        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -88,6 +74,13 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem(IconData icon, String label) {
+    return BottomNavigationBarItem(
+      icon: Icon(icon),
+      label: label,
     );
   }
 }

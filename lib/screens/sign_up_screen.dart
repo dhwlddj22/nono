@@ -15,10 +15,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _signUp() async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // ✅ Firebase에서 사용자 생성
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // ✅ 사용자 이름 업데이트
+      await userCredential.user?.updateDisplayName(_nameController.text.trim());
+
+      // ✅ 변경 사항 적용을 위해 reload()
+      await userCredential.user?.reload();
+
+      // ✅ 회원가입 성공 시 WelcomeScreen으로 이동
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => WelcomeScreen()),

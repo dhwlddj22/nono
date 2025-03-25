@@ -6,7 +6,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("com.google.gms:google-services:4.3.15") // Firebase 플러그인 추가
+        classpath("com.google.gms:google-services:4.3.15") // ✅ Firebase 플러그인
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0")
     }
 }

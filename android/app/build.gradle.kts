@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.nono"
-    compileSdk = 34 // Flutter Gradle에서 자동 지정하지 않는 경우, 직접 명시
+    compileSdk = 35 // Flutter Gradle에서 자동 지정하지 않는 경우, 직접 명시
 
     ndkVersion = "29.0.13113456"
 
@@ -44,4 +44,6 @@ flutter {
 dependencies {
     implementation("com.google.firebase:firebase-auth:22.1.1") // Firebase Auth 추가
     implementation("com.google.firebase:firebase-core:21.1.1") // Firebase Core 추가
+    implementation("com.google.firebase:firebase-storage:20.3.0") // ✅ 스토리지도 추가해야 함
+
 }

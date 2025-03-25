@@ -34,6 +34,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
@@ -75,7 +83,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
         suffixIcon: isPassword
             ? IconButton(
-          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Colors.white),
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.white,
+          ),
           onPressed: () => setState(() => _obscureText = !_obscureText),
         )
             : null,

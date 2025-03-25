@@ -23,13 +23,26 @@ class WelcomeScreen extends StatelessWidget {
               textAlign: TextAlign.left,
             ),
             SizedBox(height: 22),
-            Text(
-              '지금부터 소음 문제 해결을 위한\n스마트한 기능을 경험해 보세요! 🎉',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontFamily: 'Pretendard', // Pretendard 폰트 적용
-                fontWeight: FontWeight.w700, // Bold (700)
+            Text.rich(
+              TextSpan(
+                text: '지금부터 소음 문제 해결을 위한\n',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w700,
+                ),
+                children: [
+                  TextSpan(
+                    text: '스마트한 기능',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900, // 더 굵게
+                    ),
+                  ),
+                  TextSpan(
+                    text: '을 경험해 보세요! 🎉',
+                  ),
+                ],
               ),
               textAlign: TextAlign.left,
             ),

@@ -14,7 +14,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
+      theme: ThemeData(
+        fontFamily: 'Pretendard', // 앱 전체에 Pretendard 폰트 적용
+        brightness: Brightness.dark, // 기존의 다크 테마 유지
+      ),
       home: SplashScreen(),
     );
   }

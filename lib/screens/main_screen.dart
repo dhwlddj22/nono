@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'my_page_screen.dart';
+import 'noise_analysis_screen.dart';
+import 'report_screen.dart';
+import 'board_screen.dart';
+// import 'legal_screen.dart';
+// import 'market_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -7,38 +11,46 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  bool _isSettingsPressed = false; // ✅ 버튼 클릭 여부 상태
+  int _selectedIndex = 2; // 기본값: AI 소음 측정 페이지
+
+  final List<Widget> _pages = [
+    ReportScreen(),
+    BoardScreen(),
+    NoiseAnalysisChatScreen(), // AI 소음 측정 (기본 화면)
+    // LegalScreen(),
+    // MarketScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('NO!SE GUARD', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: _isSettingsPressed ? Colors.green : Colors.grey, // ✅ 색상 변경
-            ),
-            onPressed: () {
-              setState(() {
-                _isSettingsPressed = true; // ✅ 클릭 시 초록색으로 변경
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyPageScreen()),
-              ).then((_) {
-                setState(() {
-                  _isSettingsPressed = false; // ✅ 마이페이지에서 돌아오면 회색으로 복구
-                });
-              });
-            },
-          ),
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: [
+          _buildNavItem(Icons.lightbulb_outline, "원터치 신고"),
+          _buildNavItem(Icons.chat_bubble_outline, "소음게시판"),
+          _buildNavItem(Icons.adb, "AI소음측정"),
+          _buildNavItem(Icons.gavel, "법률지원"),
+          _buildNavItem(Icons.shopping_bag_outlined, "소음마켓"),
         ],
       ),
-      body: Center(child: Text('메인 화면 내용')),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem(IconData icon, String label) {
+    return BottomNavigationBarItem(
+      icon: Icon(icon),
+      label: label,
     );
   }
 }

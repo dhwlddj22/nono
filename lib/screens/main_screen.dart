@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'noise_analysis_screen.dart';
 import 'report_screen.dart';
-import 'board_screen.dart';
+import 'community_screen.dart';
 // import 'legal_screen.dart';
 // import 'market_screen.dart';
 
@@ -15,7 +15,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     ReportScreen(),
-    BoardScreen(),
+    CommunityScreen(),
     NoiseAnalysisChatScreen(), // AI 소음 측정 (기본 화면)
     // LegalScreen(),
     // MarketScreen(),
@@ -42,36 +42,6 @@ class _MainScreenState extends State<MainScreen> {
           _buildNavItem(Icons.adb, "AI소음측정"),
           _buildNavItem(Icons.gavel, "법률지원"),
           _buildNavItem(Icons.shopping_bag_outlined, "소음마켓"),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.black,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.white,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.campaign),
-            label: '원터치 신고',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: '소음게시판',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.graphic_eq),
-            label: 'AI소음측정',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.gavel),
-            label: '법률지원',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            label: '소음마켓',
-          ),
         ],
       ),
     );

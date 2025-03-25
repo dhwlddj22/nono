@@ -27,12 +27,6 @@
 
     # 🔹 안드로이드 권한 요청 (API 33+ 대응)
     permission_handler: ^11.0.1
-    cupertino_icons: ^1.0.8
-    flutter_native_splash: ^2.4.5
-    firebase_core: ^3.12.1
-    firebase_auth: ^5.5.1
-    cloud_firestore: ^5.6.5
-    firebase_storage: ^12.4.4
     file_picker: ^9.0.0
 
     # 🔹 네이티브 스플래시 화면 설정

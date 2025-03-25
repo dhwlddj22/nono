@@ -163,19 +163,6 @@ class CommunityScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.report), label: "원터치 신고"),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble), label: "소음게시판"),
-          BottomNavigationBarItem(icon: Icon(Icons.graphic_eq), label: "AI소음측정"),
-          BottomNavigationBarItem(icon: Icon(Icons.gavel), label: "법률지원"),
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: "소음마켓"),
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 
@@ -11,11 +10,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+
+    // 이미지 미리 로딩 → 화면 깜빡임 방지
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await precacheImage(AssetImage('assets/logo.png'), context); // ✅ 이미지 미리 캐시
+      await Future.delayed(Duration(seconds: 2)); // 지연
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+        );
+      }
     });
   }
 
@@ -24,22 +29,27 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // 중앙 정렬
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
             flex: 3,
-            child: Center( // 로고를 중앙에 배치
+            child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset('assets/logo.png', width: 270), // 로고 이미지
+                  Image.asset(
+                    'assets/logo.png',
+                    width: 270,
+                    filterQuality: FilterQuality.high,
+                  ),
                   SizedBox(height: 20),
                   Text(
                     '스마트한 층간소음 해결',
-                    style: TextStyle(color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -47,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           Expanded(
-            flex: 1, // 아래 텍스트를 하단으로 배치
+            flex: 1,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

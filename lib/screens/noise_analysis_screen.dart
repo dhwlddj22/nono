@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'message.dart';
 import 'chat_bubble.dart';
 import 'openai_service.dart';
+import 'my_page_screen.dart';
 
 class NoiseAnalysisChatScreen extends StatefulWidget {
   @override
@@ -94,9 +95,14 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {},
-          )
+            icon: Icon(Icons.settings, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyPageScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: Column(

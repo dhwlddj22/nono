@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'chat_history_screen.dart';
 import 'message.dart';
 import 'chat_bubble.dart';
 import 'openai_service.dart';
@@ -19,33 +21,46 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   bool _isLoading = false;
 
   void _addMessage(String content, MessageType type) {
+    print("📥 Firestore 저장 시도: $content");
+
+    final message = Message(content: content, type: type, timestamp: DateTime.now());
+
+    if (content.trim().isNotEmpty && !content.contains("�")) {
+      FirebaseFirestore.instance.collection('chat_history').add({
+        'text': content,
+        'type': type.toString().split('.').last,
+        'timestamp': Timestamp.now(),
+      });
+    }
+
     setState(() {
-      _messages.insert(
-        0,
-        Message(content: content, type: type, timestamp: DateTime.now()),
-      );
+      _messages.insert(0, message);
     });
   }
 
+
+
   Future<void> _sendMessage() async {
     final userInput = _controller.text.trim();
-    if (userInput.isEmpty && _selectedFile == null) return;
 
+    // 1️⃣ 음성 파일이 선택된 경우
     if (_selectedFile != null) {
       final fileName = _selectedFile!.path.split('/').last;
       _addMessage(fileName, MessageType.file);
 
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
-      // 업로드 + Whisper + GPT
       try {
+        // Firebase 업로드
         final ref = FirebaseStorage.instance
             .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
         await ref.putFile(_selectedFile!);
+
+        // Whisper 텍스트 추출
         final transcript = await OpenAIService.transcribeAudio(_selectedFile!);
-        if (transcript != null) {
+        print("📥 Whisper 응답: $transcript");
+
+        if (transcript != null && transcript.trim().isNotEmpty) {
           _addMessage(transcript, MessageType.user);
 
           final analysis = await OpenAIService.analyzeNoise(transcript);
@@ -61,8 +76,13 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
         _isLoading = false;
         _selectedFile = null;
       });
+
+      _controller.clear();
+      // ❗ 텍스트는 무시해야 하므로 여기서 종료
+      return;
     }
 
+    // 2️⃣ 텍스트 입력만 있는 경우
     if (userInput.isNotEmpty) {
       _addMessage(userInput, MessageType.user);
       _controller.clear();
@@ -75,6 +95,8 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       setState(() => _isLoading = false);
     }
   }
+
+
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.audio);
@@ -93,6 +115,15 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
         backgroundColor: Colors.black,
         title: Text("NO!SE GUARD"),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.chat),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatHistoryScreen()),
+            );
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: Colors.white),
@@ -105,6 +136,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
           ),
         ],
       ),
+
       body: Column(
         children: [
           Expanded(

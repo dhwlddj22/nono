@@ -12,7 +12,7 @@ class CommunityScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
-        automaticallyImplyLeading: false, // ← 이 줄 추가
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
@@ -38,7 +38,10 @@ class CommunityScreen extends StatelessWidget {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
 
-                final posts = snapshot.data!.docs;
+                final posts = snapshot.data!.docs.where((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  return data['type'] != 'report';
+                }).toList();
 
                 return ListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -49,7 +52,7 @@ class CommunityScreen extends StatelessWidget {
 
                     final postId = post.id;
                     final title = data['title'] ?? '제목 없음';
-                    final authorEmail = data.containsKey('authorEmail') ? data['authorEmail'] : '익명';
+                    final authorEmail = data['authorEmail'] ?? '익명';
                     final imageUrls = List<String>.from(data['imageUrls'] ?? []);
                     final imageUrl = imageUrls.isNotEmpty ? imageUrls.first : null;
                     final timestamp = (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
@@ -123,6 +126,9 @@ class CommunityScreen extends StatelessWidget {
                                                 fontSize: 15,
                                                 color: Colors.black,
                                               ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+
                                             ),
                                             SizedBox(height: 6),
                                             Text(

@@ -11,6 +11,7 @@
   dependencies:
     flutter:
       sdk: flutter
+    url_launcher: ^6.1.14
 
     # 🔹 아이콘 패키지
     cupertino_icons: ^1.0.8

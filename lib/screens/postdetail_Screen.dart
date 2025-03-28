@@ -93,7 +93,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       isReporting: true,
                       postId: widget.postId,
                       initialTitle: '[게시글 신고] ${widget.title}',
-                      initialContent: widget.content,
+                      initialContent: '',
                     ),
                   ),
                 );
@@ -132,6 +132,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           if (!postSnapshot.hasData) return Center(child: CircularProgressIndicator());
 
           final data = postSnapshot.data!.data() as Map<String, dynamic>;
+          final title = data['title'] ?? '';
+          final content = data['content'] ?? '';
+          final imageUrls = List<String>.from(data['imageUrls'] ?? []);
           final likes = data['likes'] ?? 0;
           final commentCount = data['commentCount'] ?? 0;
           final likedBy = List<String>.from(data['likedBy'] ?? []);
@@ -164,12 +167,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 ),
                 SizedBox(height: 13),
                 Text(
-                  widget.title,
+                  title,
                   style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Divider(color: Colors.white),
-                if (widget.imageUrls.isNotEmpty)
-                  ...widget.imageUrls.map((url) => Padding(
+                if (imageUrls.isNotEmpty)
+                  ...imageUrls.map((url) => Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -177,7 +180,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ),
                   )),
                 SizedBox(height: 12),
-                Text(widget.content, style: TextStyle(color: Colors.white, fontSize: 18)),
+                Text(content, style: TextStyle(color: Colors.white, fontSize: 18)),
                 SizedBox(height: 30),
                 Divider(color: Colors.white30),
                 Row(
@@ -204,7 +207,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           MaterialPageRoute(
                             builder: (_) => CommentsScreen(
                               postId: widget.postId,
-                              postTitle: widget.title,
+                              postTitle: title,
                             ),
                           ),
                         );
@@ -224,6 +227,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           );
         },
       ),
+
     );
   }
 }

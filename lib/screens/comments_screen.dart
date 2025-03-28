@@ -123,7 +123,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           isReporting: true,
           postId: widget.postId,
           initialTitle: '[댓글 신고] $userEmail',
-          initialContent: text,
+          initialContent: '',
         ),
       ),
     );
@@ -256,6 +256,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: TextField(
                     controller: _commentController,
                     style: TextStyle(color: Colors.black),
+                    onSubmitted: (_) => _addComment(), // ← 추가
                     decoration: InputDecoration(
                       hintText: "댓글을 남겨보세요",
                       hintStyle: TextStyle(color: Colors.black54),
@@ -268,6 +269,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       ),
                     ),
                   ),
+
                 ),
                 SizedBox(width: 8),
                 CircleAvatar(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'noise_analysis_screen.dart';
-import 'report_screen.dart';
+import 'notify_screen.dart';
 import 'community_screen.dart';
-// import 'legal_screen.dart';
-// import 'market_screen.dart';
+import 'package:nono/legal_assistance/legal_screen.dart';
+import 'package:nono/market/market_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -14,11 +14,11 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 2; // 기본값: AI 소음 측정 페이지
 
   final List<Widget> _pages = [
-    ReportScreen(),
+    ReportSelectionScreen(),
     CommunityScreen(),
     NoiseAnalysisChatScreen(), // AI 소음 측정 (기본 화면)
-    // LegalScreen(),
-    // MarketScreen(),
+    LegalScreen(),
+    MarketPage(),
   ];
 
   @override

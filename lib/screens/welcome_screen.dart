@@ -10,15 +10,15 @@ class WelcomeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               '층간소음 걱정 없이 편안한 하루를!',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w700,
+                fontFamily: 'Pretendard', // Pretendard 폰트 적용
+                fontWeight: FontWeight.w700, // Bold (700)
               ),
               textAlign: TextAlign.left,
             ),
@@ -36,7 +36,7 @@ class WelcomeScreen extends StatelessWidget {
                   TextSpan(
                     text: '스마트한 기능',
                     style: TextStyle(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w900, // 더 굵게
                     ),
                   ),
                   TextSpan(
@@ -47,9 +47,7 @@ class WelcomeScreen extends StatelessWidget {
               textAlign: TextAlign.left,
             ),
             SizedBox(height: 40),
-            Center(
-              child: Image.asset('assets/thumbs_up.png', width: 120),
-            ),
+            Image.asset('assets/thumbs_up.png', width: 120), // 👍 이모지 이미지
             SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
@@ -65,10 +63,7 @@ class WelcomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
-                '시작하기',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
+              child: Text('시작하기', style: TextStyle(color: Colors.white, fontSize: 18)),
             ),
           ],
         ),

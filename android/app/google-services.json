@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "782265610116",
+    "project_id": "noiseguard12",
+    "storage_bucket": "noiseguard12.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782265610116:android:a36b5eb3497a938dbeb7d1",
+        "android_client_info": {
+          "package_name": "com.example.nono"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": ""
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 class OpenAIService {
-  static const String _apiKey = "OPENAI_API_KEY"; // 실제 키 입력
+  static const String _apiKey = "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"; // 실제 키 입력
   static const String _whisperUrl = "https://api.openai.com/v1/audio/transcriptions";
   static const String _chatGptUrl = "https://api.openai.com/v1/chat/completions";
 

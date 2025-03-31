@@ -48,19 +48,19 @@ class NotifyPage extends State<ReportSelectionScreen> {
                     description: "거주지 관리사무소에 직접 전화하여\n층간소음 문제를 문의하세요."
                         "\n현재 살고 있는 주택을 검색 후"
                         "\n단지정보에서 전화번호를 탭하여 전화하세요.",
-                    icon: Icons.phone,
+                    imagePath: "assets/call.png",
                   ),
                   _buildSelectableCard(
                     index: 1,
                     title: "정부기관 도움",
                     description: "정부 운영 층간소음 상담센터로 연결됩니다.\n신고 및 상담을 요청할 수 있어요.",
-                    icon: Icons.favorite,
+                    imagePath: "assets/gov.png",
                   ),
                   _buildSelectableCard(
                     index: 2,
                     title: "경찰에 신고하기",
                     description: "소음이 심각할 경우 112에 전화하거나 문자로 신고할 수 있어요.",
-                    icon: Icons.local_police,
+                    imagePath: "assets/police.png",
                   ),
                 ],
               ),
@@ -100,7 +100,7 @@ class NotifyPage extends State<ReportSelectionScreen> {
     required int index,
     required String title,
     required String description,
-    required IconData icon,
+    required String imagePath,
   }) {
     bool isSelected = selectedIndex == index; // 선택된 상태인지 확인
 
@@ -127,7 +127,11 @@ class NotifyPage extends State<ReportSelectionScreen> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.red, size: 28),
+            Image.asset(
+              imagePath,
+              width: 30,
+              height: 30,
+            ),
             SizedBox(width: 12),
             Expanded(
               child: Column(

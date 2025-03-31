@@ -104,7 +104,7 @@ class ProductDetailScreen extends StatelessWidget {
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 150),
                   // 🔥 링크 버튼
                   SizedBox(
                     width: double.infinity,

@@ -46,8 +46,8 @@
     assets:
       - assets/logo.png
       - assets/thumbs_up.png
-      - assets/Close.png
-      - assets/Camera.png
+      - assets/close.png
+      - assets/camera.png
       - assets/Image.png
       - assets/두꺼운 커튼.jpeg
       - assets/방음 문틈 테이프.jpeg

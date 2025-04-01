@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:nono/screens/gov_tutorial_screen.dart';
 
 class ReportSelectionScreen extends StatefulWidget {
   const ReportSelectionScreen({super.key});
@@ -72,7 +73,10 @@ class NotifyPage extends State<ReportSelectionScreen> {
                   _connectLink("https://new.land.naver.com/complexes?ms=37.515119,126.906243,17&a=APT:PRE&e=RETAIL");
                 }
                 else if(selectedIndex == 1) {
-                  _connectLink("https://floor.noiseinfo.or.kr/floornoise/");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => GovTutorialScreen()),
+                  );
                 }
                 else {
                   _makePhoneCall("112");

@@ -52,7 +52,7 @@ class CommunityScreen extends StatelessWidget {
 
                     final postId = post.id;
                     final title = data['title'] ?? '제목 없음';
-                    final authorEmail = data['authorEmail'] ?? '익명';
+                    final authorName = data['authorName'] ?? '익명';
                     final imageUrls = List<String>.from(data['imageUrls'] ?? []);
                     final imageUrl = imageUrls.isNotEmpty ? imageUrls.first : null;
                     final timestamp = (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
@@ -77,7 +77,7 @@ class CommunityScreen extends StatelessWidget {
                                     builder: (_) => PostDetailScreen(
                                       postId: postId,
                                       title: title,
-                                      authorEmail: authorEmail,
+                                      authorEmail: data['authorEmail'] ?? '익명',
                                       content: data['content'] ?? '',
                                       imageUrls: imageUrls,
                                       timestamp: timestamp,
@@ -128,11 +128,10 @@ class CommunityScreen extends StatelessWidget {
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
-
                                             ),
                                             SizedBox(height: 6),
                                             Text(
-                                              authorEmail,
+                                              authorName,
                                               style: TextStyle(
                                                 fontSize: 13,
                                                 color: Colors.grey[600],

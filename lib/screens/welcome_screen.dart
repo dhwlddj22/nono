@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'main_screen.dart'; // 메인 화면으로 이동
+import 'onboarding_screen.dart'; // 온보딩 화면으로 이동
 
 class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,18 +14,18 @@ class WelcomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               '층간소음 걱정 없이 편안한 하루를!',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
-                fontFamily: 'Pretendard', // Pretendard 폰트 적용
-                fontWeight: FontWeight.w700, // Bold (700)
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.left,
             ),
-            SizedBox(height: 22),
-            Text.rich(
+            const SizedBox(height: 22),
+            const Text.rich(
               TextSpan(
                 text: '지금부터 소음 문제 해결을 위한\n',
                 style: TextStyle(
@@ -36,7 +38,7 @@ class WelcomeScreen extends StatelessWidget {
                   TextSpan(
                     text: '스마트한 기능',
                     style: TextStyle(
-                      fontWeight: FontWeight.w900, // 더 굵게
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   TextSpan(
@@ -46,24 +48,29 @@ class WelcomeScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.left,
             ),
-            SizedBox(height: 40),
-            Image.asset('assets/thumbs_up.png', width: 120), // 👍 이모지 이미지
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
+            Image.asset('assets/thumbs_up.png', width: 120),
+            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen(),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text('시작하기', style: TextStyle(color: Colors.white, fontSize: 18)),
+              child: const Text(
+                '시작하기',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
             ),
           ],
         ),

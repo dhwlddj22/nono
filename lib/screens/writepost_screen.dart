@@ -112,7 +112,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
   Future<void> _submitPost() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
-    final authorEmail = FirebaseAuth.instance.currentUser?.email ?? '익명';
+    final currentUser = FirebaseAuth.instance.currentUser;
 
     if (title.isEmpty || content.isEmpty) {
       showDialog(
@@ -136,15 +136,22 @@ class _WritePostScreenState extends State<WritePostScreen> {
       'title': title,
       'content': content,
       'imageUrls': _imageUrls,
-      'authorEmail': authorEmail,
+      'authorEmail': currentUser?.email ?? '익명',
+      'authorName': currentUser?.displayName ?? '익명',
       'timestamp': FieldValue.serverTimestamp(),
-      'type': widget.isReporting ? 'report' : _selectedType,
+      'type': _selectedType,
     };
 
     if (widget.isEditing && widget.postId != null) {
-      await FirebaseFirestore.instance.collection('posts').doc(widget.postId).update(postData);
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.postId)
+          .update(postData);
     } else {
-      await FirebaseFirestore.instance.collection('posts').add(postData);
+      final targetCollection = widget.isReporting ? 'reports' : 'posts';
+      await FirebaseFirestore.instance
+          .collection(targetCollection)
+          .add(postData);
     }
 
     _titleController.clear();
@@ -204,6 +211,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
+                              onSubmitted: (_) => _submitPost(),
                             ),
                             if (_isUploading)
                               Padding(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 import 'tutorial_text_styles.dart';
-import 'gov_assistance_screen.dart';
 
 class GovTutorialScreen extends StatefulWidget {
   const GovTutorialScreen({super.key});
@@ -19,12 +20,15 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
   @override
   void initState() {
     super.initState();
-    _markAsSeen();
+    _markAsSeen(); // optional if you want to pre-flag before pressing 시작하기
   }
 
   Future<void> _markAsSeen() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('govTutorialSeen', true);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      await docRef.set({'govTutorialSeen': true}, SetOptions(merge: true));
+    }
   }
 
   void _onPageChanged(int index) {
@@ -34,11 +38,9 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
     });
   }
 
-  void _onStart() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const GovAssistanceScreen()),
-    );
+  Future<void> _onStart() async {
+    await _markAsSeen(); // ✅ 실제로 "시작하기" 눌렀을 때 저장
+    Navigator.pop(context, true); // true 반환하여 ReportSelectionScreen에서 확인
   }
 
   @override
@@ -106,11 +108,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Image.asset(
-                            'assets/tutorial_2.png',
-                            width: 340,
-                            height: 300,
-                          ),
+                          Image.asset('assets/tutorial_2.png', width: 340, height: 300),
                         ],
                       ),
                     ],

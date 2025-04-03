@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:nono/screens/gov_tutorial_screen.dart';
+import 'package:nono/screens/gov_assistance_screen.dart';
 import 'package:nono/screens/police_report_screen.dart';
 
 class ReportSelectionScreen extends StatefulWidget {
@@ -23,14 +27,40 @@ class NotifyPage extends State<ReportSelectionScreen> {
     if (selectedIndex == 0) {
       _connectLink("https://new.land.naver.com/complexes?ms=37.515119,126.906243,17&a=APT:PRE&e=RETAIL");
     } else if (selectedIndex == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const GovTutorialScreen()),
-      );
+      _handleGovSupport(); // 🔥 튜토리얼 체크 함수
     } else if (selectedIndex == 2) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const PoliceReportScreen()),
+      );
+    }
+  }
+
+  Future<void> _handleGovSupport() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final snapshot = await docRef.get();
+    final seen = snapshot.data()?['govTutorialSeen'] ?? false;
+
+    if (!seen) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const GovTutorialScreen()),
+      );
+
+      if (result == true) {
+        await docRef.set({'govTutorialSeen': true}, SetOptions(merge: true));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const GovAssistanceScreen()),
+        );
+      }
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const GovAssistanceScreen()),
       );
     }
   }

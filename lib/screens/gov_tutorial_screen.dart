@@ -107,14 +107,9 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Image.asset(
-                            'assets/tutorial_2_1.png',
-                            width: 170,
-                            height: 314,
-                          ),
-                          Image.asset(
-                            'assets/tutorial_2_2.png',
-                            width: 174,
-                            height: 100,
+                            'assets/tutorial_2.png',
+                            width: 340,
+                            height: 300,
                           ),
                         ],
                       ),

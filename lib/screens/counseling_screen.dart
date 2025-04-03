@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CounselingScreen extends StatefulWidget {
   const CounselingScreen({super.key});
@@ -16,16 +17,30 @@ class _CounselingScreenState extends State<CounselingScreen> {
     });
   }
 
-  void _handleStart() {
+  void _handleStart() async {
     if (selectedIndex == 0) {
-      // 콜 상담 로직
-      print("콜 상담 신청 선택됨");
-      // 예: 전화 연결 or 연결 링크
+      final Uri telUri = Uri(scheme: 'tel', path: '16612642');
+      await _launchUri(telUri);
     } else if (selectedIndex == 1) {
-      // 인터넷 상담 로직
-      print("인터넷 상담 신청 선택됨");
-      // 예: 양식 제출 화면 이동
+      final Uri url = Uri.parse('https://floor.noiseinfo.or.kr/floornoise/home/complaint/consultreq.do');
+      await _launchUri(url, external: true);
     }
+  }
+
+  Future<void> _launchUri(Uri uri, {bool external = false}) async {
+    try {
+      final launchMode = external ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+      final launched = await launchUrl(uri, mode: launchMode);
+      if (!launched) throw Exception('launch failed');
+    } catch (e) {
+      debugPrint('링크 열기 실패: $e');
+      _showError('링크를 열 수 없습니다.');
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)));
   }
 
   @override
@@ -71,7 +86,8 @@ class _CounselingScreenState extends State<CounselingScreen> {
             ElevatedButton(
               onPressed: selectedIndex != null ? _handleStart : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedIndex != null ? Colors.blue : Colors.grey,
+                backgroundColor: selectedIndex != null ? Colors.blue : Colors
+                    .grey,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -79,7 +95,9 @@ class _CounselingScreenState extends State<CounselingScreen> {
               ),
               child: const Text(
                 "시작하기",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
               ),
             ),
           ],
@@ -99,48 +117,52 @@ class _CounselingScreenState extends State<CounselingScreen> {
     return GestureDetector(
       onTap: () => selectItem(index),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.only(bottom: 40),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(26),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey.shade300,
-            width: 2,
+            color: isSelected ? Colors.blue : Colors.transparent,
+            width: 2.5,
           ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // 🔥 핵심!
           children: [
-            Image.asset(imagePath, width: 32, height: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+            Row(
+              children: [
+                Image.asset(imagePath, width: 34, height: 34),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 22,
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
+                      fontFamily: 'Pretendard',
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                Icon(
+                  isSelected ? Icons.check_circle : Icons
+                      .radio_button_unchecked,
+                  color: isSelected ? Colors.blue : Colors.grey,
+                ),
+              ],
             ),
-            Icon(
-              isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: isSelected ? Colors.blue : Colors.grey,
+            const SizedBox(height: 12),
+            Text(
+              description,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.7,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF404A50),
+                fontFamily: 'Pretendard',
+              ),
             ),
           ],
         ),

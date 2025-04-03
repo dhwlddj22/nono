@@ -63,6 +63,10 @@
       - assets/noise_meter.png
       - assets/call_consult.png
       - assets/web_consult.png
+      - assets/message.png
+      - assets/phone.png
+      - assets/warning_icon.png
+      - assets/big_police.png
     fonts:
       - family: Pretendard
         fonts:

@@ -11,10 +11,10 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-        appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        toolbarHeight: 10,
+      appBar: AppBar(
+      backgroundColor: Colors.black,
+      elevation: 0,
+      toolbarHeight: 10,
       ),
       body: SingleChildScrollView(
         child: Column(

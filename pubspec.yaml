@@ -12,6 +12,8 @@
     flutter:
       sdk: flutter
     url_launcher: ^6.1.14
+    shared_preferences: ^2.2.2
+    smooth_page_indicator: ^1.1.0
 
     # 🔹 아이콘 패키지
     cupertino_icons: ^1.0.8
@@ -60,6 +62,22 @@
       - assets/lawyers/김민지.png
       - assets/lawyers/송윤섭.png
       - assets/market.png
+      - assets/call.png
+      - assets/gov.png
+      - assets/police.png
+      - assets/tutorial_1_1.png
+      - assets/tutorial_1_2.png
+      - assets/tutorial_2.png
+      - assets/tutorial_3.png
+      - assets/consultation.png
+      - assets/form_icon.png
+      - assets/noise_meter.png
+      - assets/call_consult.png
+      - assets/web_consult.png
+      - assets/message.png
+      - assets/phone.png
+      - assets/warning_icon.png
+      - assets/big_police.png
     fonts:
       - family: Pretendard
         fonts:

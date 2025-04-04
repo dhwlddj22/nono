@@ -48,9 +48,20 @@
     assets:
       - assets/logo.png
       - assets/thumbs_up.png
-      - assets/Close.png
-      - assets/Camera.png
+      - assets/close.png
+      - assets/camera.png
       - assets/Image.png
+      - assets/products/두꺼운 커튼.jpeg
+      - assets/products/방음 문틈 테이프.jpeg
+      - assets/products/방음폼.jpeg
+      - assets/products/소음차단이어폰.jpeg
+      - assets/products/이어플러그.jpeg
+      - assets/products/층간소음 매트.jpeg
+      - assets/lawyers/곽두팔.png
+      - assets/lawyers/김도윤.png
+      - assets/lawyers/김민지.png
+      - assets/lawyers/송윤섭.png
+      - assets/market.png
       - assets/call.png
       - assets/gov.png
       - assets/police.png

@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.nono"
-        minSdk = 23 // Flutter 기본 minSdkVersion이 21 이상인지 확인
+        minSdk = 24 // Flutter 기본 minSdkVersion이 21 이상인지 확인
         targetSdk = 33 // 최신 버전 사용 (Flutter 최신 버전 기준)
         versionCode = 1
         versionName = "1.0"

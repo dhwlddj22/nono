@@ -10,6 +10,10 @@ import 'openai_service.dart';
 import 'my_page_screen.dart';
 
 class NoiseAnalysisChatScreen extends StatefulWidget {
+  final String? initialInput;
+
+  NoiseAnalysisChatScreen({this.initialInput});
+
   @override
   _NoiseAnalysisChatScreenState createState() => _NoiseAnalysisChatScreenState();
 }
@@ -20,9 +24,25 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   File? _selectedFile;
   bool _isLoading = false;
 
-  void _addMessage(String content, MessageType type) {
-    print("📥 Firestore 저장 시도: $content");
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialInput != null && widget.initialInput!.trim().isNotEmpty) {
+      _autoAnalyze(widget.initialInput!);
+    }
+  }
 
+  Future<void> _autoAnalyze(String text) async {
+    _addMessage(text, MessageType.user);
+    setState(() => _isLoading = true);
+
+    final reply = await OpenAIService.analyzeNoise(text);
+    _addMessage(reply ?? "AI 응답 실패", MessageType.ai);
+
+    setState(() => _isLoading = false);
+  }
+
+  void _addMessage(String content, MessageType type) {
     final message = Message(content: content, type: type, timestamp: DateTime.now());
 
     if (content.trim().isNotEmpty && !content.contains("�")) {
@@ -38,51 +58,9 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     });
   }
 
-
-
   Future<void> _sendMessage() async {
     final userInput = _controller.text.trim();
 
-    // 1️⃣ 음성 파일이 선택된 경우
-    if (_selectedFile != null) {
-      final fileName = _selectedFile!.path.split('/').last;
-      _addMessage(fileName, MessageType.file);
-
-      setState(() => _isLoading = true);
-
-      try {
-        // Firebase 업로드
-        final ref = FirebaseStorage.instance
-            .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
-        await ref.putFile(_selectedFile!);
-
-        // Whisper 텍스트 추출
-        final transcript = await OpenAIService.transcribeAudio(_selectedFile!);
-        print("📥 Whisper 응답: $transcript");
-
-        if (transcript != null && transcript.trim().isNotEmpty) {
-          _addMessage(transcript, MessageType.user);
-
-          final analysis = await OpenAIService.analyzeNoise(transcript);
-          _addMessage(analysis ?? "분석 실패", MessageType.ai);
-        } else {
-          _addMessage("음성 인식 실패", MessageType.ai);
-        }
-      } catch (e) {
-        _addMessage("에러 발생: $e", MessageType.ai);
-      }
-
-      setState(() {
-        _isLoading = false;
-        _selectedFile = null;
-      });
-
-      _controller.clear();
-      // ❗ 텍스트는 무시해야 하므로 여기서 종료
-      return;
-    }
-
-    // 2️⃣ 텍스트 입력만 있는 경우
     if (userInput.isNotEmpty) {
       _addMessage(userInput, MessageType.user);
       _controller.clear();
@@ -96,14 +74,16 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     }
   }
 
-
-
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.audio);
     if (result != null) {
       setState(() {
         _selectedFile = File(result.files.single.path!);
       });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('이 버전에서는 오디오 파일 분석은 지원하지 않아요.')),
+      );
     }
   }
 
@@ -136,7 +116,6 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
           ),
         ],
       ),
-
       body: Column(
         children: [
           Expanded(

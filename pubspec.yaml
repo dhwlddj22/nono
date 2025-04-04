@@ -35,6 +35,12 @@
     # 🔹 네이티브 스플래시 화면 설정
     flutter_native_splash: ^2.4.5
 
+    noise_meter: ^5.0.2
+    flutter_sound: ^9.2.13+1
+    record: ^6.0.0
+    path_provider: ^2.0.15
+    fl_chart: ^0.66.0
+
   dev_dependencies:
     flutter_test:
       sdk: flutter

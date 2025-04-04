@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main_screen.dart'; // 시작하기 클릭 시 이동할 메인 화면
+import 'onboarding_screen.dart'; // 온보딩 화면으로 이동
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -67,7 +68,7 @@ class WelcomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => MainScreen()),
+                      MaterialPageRoute(builder: (context) => OnboardingScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

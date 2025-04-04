@@ -26,6 +26,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         .collection('comments')
         .add({
       'userEmail': user!.email,
+      'userName': user!.displayName ?? '익명', // ✅ 이름 저장
       'text': _commentController.text.trim(),
       'timestamp': FieldValue.serverTimestamp(),
     });
@@ -115,14 +116,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
     }
   }
 
-  void _reportComment(String userEmail, String text) {
+  void _reportComment(String userName, String text) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => WritePostScreen(
           isReporting: true,
           postId: widget.postId,
-          initialTitle: '[댓글 신고] $userEmail',
+          initialTitle: '[댓글 신고] $userName',
           initialContent: '',
         ),
       ),
@@ -162,13 +163,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     final data = doc.data() as Map<String, dynamic>;
                     final commentId = doc.id;
                     final userEmail = data['userEmail'] ?? '익명';
+                    final userName = data['userName'] ?? userEmail; // ✅ 이름 우선
                     final text = data['text'] ?? '';
                     final timestamp = (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
                     final isOwner = userEmail == user?.email;
 
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
                         CircleAvatar(
                           radius: 20,
@@ -186,10 +187,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   Expanded(
                                     child: RichText(
                                       text: TextSpan(
-                                        style: TextStyle(color: Colors.white, fontSize: 15, height: 1.5 ),
+                                        style: TextStyle(color: Colors.white, fontSize: 15, height: 1.5),
                                         children: [
                                           TextSpan(
-                                            text: '$userEmail\n',
+                                            text: '$userName\n',
                                             style: TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                           TextSpan(
@@ -205,7 +206,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                     onSelected: (value) {
                                       if (value == 'edit') _editComment(commentId, text);
                                       else if (value == 'delete') _deleteComment(commentId);
-                                      else if (value == 'report') _reportComment(userEmail, text);
+                                      else if (value == 'report') _reportComment(userName, text);
                                     },
                                     itemBuilder: (_) {
                                       if (isOwner) {
@@ -219,12 +220,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                             child: Text("삭제", style: TextStyle(color: Colors.black)),
                                           ),
                                         ];
+
                                       } else {
                                         return [
-                                          PopupMenuItem(
-                                            value: 'report',
-                                            child: Text("신고", style: TextStyle(color: Colors.black)),
-                                          ),
+                                          PopupMenuItem(value: 'report', child: Text("신고")),
                                         ];
                                       }
                                     },
@@ -256,7 +255,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: TextField(
                     controller: _commentController,
                     style: TextStyle(color: Colors.black),
-                    onSubmitted: (_) => _addComment(), // ← 추가
+                    onSubmitted: (_) => _addComment(),
                     decoration: InputDecoration(
                       hintText: "댓글을 남겨보세요",
                       hintStyle: TextStyle(color: Colors.black54),
@@ -269,7 +268,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       ),
                     ),
                   ),
-
                 ),
                 SizedBox(width: 8),
                 CircleAvatar(

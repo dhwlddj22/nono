@@ -154,8 +154,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.authorEmail,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        Text(
+                          data['authorName'] ?? widget.authorEmail,
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+
                         Text(
                           "${widget.timestamp.year}.${widget.timestamp.month.toString().padLeft(2, '0')}.${widget.timestamp.day.toString().padLeft(2, '0')} "
                               "${widget.timestamp.hour.toString().padLeft(2, '0')}:${widget.timestamp.minute.toString().padLeft(2, '0')}",

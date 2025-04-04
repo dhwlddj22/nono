@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase config (don't commit this!)
+android/app/google-services.json
+
+# Sensitive OpenAI service file
+lib/screens/openai_service.dart

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -10,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'NoiseAnalysisChatScreenWithNav.dart';
 import 'chat_history_screen.dart';
-import 'main_screen.dart';
 import 'noise_analysis_screen.dart';
 import 'my_page_screen.dart';
 
@@ -26,6 +26,8 @@ class _RecordScreenState extends State<RecordScreen> {
   StreamSubscription<NoiseReading>? _noiseSubscription;
   List<double> _decibelValues = [];
   String? _recordFilePath;
+  Stopwatch _stopwatch = Stopwatch();
+  late Timer _timer;
 
   @override
   void initState() {
@@ -45,6 +47,13 @@ class _RecordScreenState extends State<RecordScreen> {
     _recordFilePath = '${dir.path}/recorded_noise.aac';
 
     await _recorder.startRecorder(toFile: _recordFilePath);
+    _stopwatch.reset();
+    _stopwatch.start();
+
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      setState(() {});
+    });
+
     _noiseSubscription = _noiseMeter.noise.listen((event) {
       setState(() {
         _decibelValues.add(event.meanDecibel);
@@ -59,6 +68,9 @@ class _RecordScreenState extends State<RecordScreen> {
   Future<void> _stopRecording() async {
     await _recorder.stopRecorder();
     await _noiseSubscription?.cancel();
+    _stopwatch.stop();
+    _timer.cancel();
+
     setState(() {
       _isRecording = false;
     });
@@ -87,8 +99,6 @@ class _RecordScreenState extends State<RecordScreen> {
         ),
       );
 
-
-
       _decibelValues.clear();
     }
   }
@@ -96,6 +106,9 @@ class _RecordScreenState extends State<RecordScreen> {
   Future<void> _cancelRecording() async {
     await _recorder.stopRecorder();
     await _noiseSubscription?.cancel();
+    _stopwatch.stop();
+    _timer.cancel();
+
     setState(() {
       _isRecording = false;
       _recordFilePath = null;
@@ -119,30 +132,34 @@ class _RecordScreenState extends State<RecordScreen> {
 
     return LineChart(
       LineChartData(
-        gridData: FlGridData(show: true),
+        gridData: FlGridData(show: false),
         titlesData: FlTitlesData(show: false),
         borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
             spots: points,
             isCurved: true,
-            color: Colors.green, // ✅ 단일 색상 사용
+            color: Colors.green,
             dotData: FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
               color: Colors.green.withOpacity(0.3),
             ),
           )
-
         ],
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    return duration.toString().split('.').first.padLeft(8, "0");
   }
 
   @override
   void dispose() {
     _recorder.closeRecorder();
     _noiseSubscription?.cancel();
+    if (_timer.isActive) _timer.cancel();
     super.dispose();
   }
 
@@ -152,86 +169,110 @@ class _RecordScreenState extends State<RecordScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('NO!SE GUARD'),
+        title: const Text('NO!SE GUARD', style: TextStyle(color: Color(0xFF57CC1C), fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.chat),
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (_) => ChatHistoryScreen()));
-          },
+          icon: const Icon(Icons.chat, color: Colors.white),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChatHistoryScreen())),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.white),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => MyPageScreen()));
-            },
-          )
+            icon: const Icon(Icons.settings, color: Colors.white),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MyPageScreen())),
+          ),
         ],
       ),
-      body: Column(
+      body: _isRecording ? _buildRecordingView() : _buildIdleView(),
+    );
+  }
+
+  Widget _buildIdleView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 20),
-          Text(
-            '실시간 데시벨 측정',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+          const SizedBox(height: 60),
+          Image.asset('assets/logo.png', width: 105, height: 104),
+          const SizedBox(height: 10),
+          const Text("스마트한 층간소음 해결", style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.w900)),
+          const Text("NO!SE GUARD", style: TextStyle(fontSize: 30, color: Color(0xFF57CC1C), fontWeight: FontWeight.bold)),
+          const SizedBox(height: 30),
+          const Text("아래의 녹음 버튼을 눌러 소음을 분석해보세요", textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF57CC1C), fontWeight: FontWeight.bold)),
+          const SizedBox(height: 100),
+          GestureDetector(
+            onTap: _startRecording,
+            child: Image.asset('assets/record.png', width:120, height: 120),
           ),
-          SizedBox(height: 10),
-          SizedBox(height: 180, child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildDecibelChart(),
-          )),
-          SizedBox(height: 10),
-          Text(
-            _decibelValues.isNotEmpty
-                ? "평균 데시벨: ${_calculateAverage().toStringAsFixed(2)} dB"
-                : "측정값 없음",
-            style: TextStyle(color: Colors.green, fontSize: 18),
-          ),
-          SizedBox(height: 40),
-          Text(
-            '스마트한 층간소음 해결, 노이즈가드',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          SizedBox(height: 10),
-          Text(
-            '아래 아이콘을 눌러 소음을 분석해보세요',
-            style: TextStyle(color: Colors.green),
-          ),
-          SizedBox(height: 50),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _circleIcon(Icons.chat_bubble_outline, () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreen()));
-              }),
-              _circleIcon(
-                _isRecording ? Icons.stop : Icons.multitrack_audio,
-                    () {
-                  _isRecording ? _stopRecording() : _startRecording();
-                },
-              ),
-              _circleIcon(Icons.close, () {
-                if (_isRecording) _cancelRecording();
-              }),
-            ],
-          )
         ],
       ),
     );
   }
 
-  Widget _circleIcon(IconData icon, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: CircleAvatar(
-        backgroundColor: Colors.green,
-        radius: 30,
-        child: Icon(icon, color: Colors.black, size: 28),
-      ),
+  Widget _buildRecordingView() {
+    return Column(
+      children: [
+        const SizedBox(height: 40),
+        const Text("새로운 녹음 제목", style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 2),
+        Text(
+          "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}",
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 50),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "평균 데시벨 ",
+              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "${_calculateAverage().toStringAsFixed(2)} dB",
+              style: const TextStyle(color: Color(0xFF57CC1C), fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: SizedBox(height: 160, child: _buildDecibelChart()),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          _formatDuration(_stopwatch.elapsed),
+          style: const TextStyle(color: Colors.white, fontSize: 37, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 40),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreen()));
+              },
+              child: SvgPicture.asset('assets/chat.svg', width: 38, height: 38),
+            ),
+            const SizedBox(width: 20),
+            GestureDetector(
+              onTap: _stopRecording,
+              child: SvgPicture.asset(
+                'assets/recording.svg',
+                width: 140,
+                height: 140,
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
+              ),
+            ),
+            const SizedBox(width:20),
+            GestureDetector(
+              onTap: _cancelRecording,
+              child: SvgPicture.asset('assets/trash.svg', width: 38, height: 38),
+            ),
+          ],
+        ),
+
+
+      ],
     );
   }
 }

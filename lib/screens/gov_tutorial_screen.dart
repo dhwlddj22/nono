@@ -138,7 +138,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                 child: ElevatedButton(
                   onPressed: _canStart ? _onStart : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _canStart ? Colors.blue : Colors.grey,
+                    backgroundColor: _canStart ? const Color(0xFF58B721) : Colors.grey,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

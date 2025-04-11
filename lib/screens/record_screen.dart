@@ -153,6 +153,11 @@ class _RecordScreenState extends State<RecordScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text('NO!SE GUARD'),
+        titleTextStyle: TextStyle(
+          color: const Color(0xFF58B721),
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.chat),

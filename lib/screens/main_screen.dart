@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: Colors.green,
+        selectedItemColor: const Color(0xFF58B721),
         unselectedItemColor: Colors.white,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,

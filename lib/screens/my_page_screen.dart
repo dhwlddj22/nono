@@ -31,17 +31,48 @@ class _MyPageScreenState extends State<MyPageScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // ✅ 모달 창 둥글게
-          title: Text('로그아웃', style: TextStyle(fontWeight: FontWeight.bold)),
-          content: Text('정말 로그아웃하시겠어요?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context), // 취소 버튼
-              child: Text('Cancel', style: TextStyle(color: Colors.blue)),
+          backgroundColor: Colors.white,
+          title: const Text(
+              '로그아웃',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
+
+              )
+          ),
+          content: Text(
+            '정말 로그아웃하시겠어요?',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.grey
             ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context), // 취소 버튼
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white
+              ),
+              child: Text(
+                  '취소',
+                  style: TextStyle(
+                    color: const Color(0xFF58B721)
+                  )
+              ),
+            ),
+            SizedBox(width: 40),
             ElevatedButton(
               onPressed: _logout, // ✅ 로그아웃 실행
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: Text('Log out', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF58B721)
+              ),
+              child: Text(
+                  '로그아웃',
+                  style: TextStyle(
+                    color: Colors.white
+                  )
+              ),
             ),
           ],
         );
@@ -65,10 +96,15 @@ class _MyPageScreenState extends State<MyPageScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('마이페이지', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('NO!SE GUARD'),
+        titleTextStyle: TextStyle(
+          color: const Color(0xFF58B721),
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // 뒤로가기 버튼
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white), // 뒤로가기 버튼
           onPressed: () {
             Navigator.pop(context);
           },

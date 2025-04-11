@@ -56,6 +56,10 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,7 +102,7 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
             ElevatedButton(
               onPressed: selectedIndex != null ? _handleStart : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedIndex != null ? Colors.blue : Colors.grey,
+                backgroundColor: selectedIndex != null ? const Color(0xFF58B721) : Colors.grey,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -132,7 +136,7 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFF58B721) : Colors.grey.shade300,
             width: 2,
           ),
         ),
@@ -166,7 +170,7 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
             ),
             Icon(
               isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: isSelected ? Colors.blue : Colors.grey,
+              color: isSelected ? const Color(0xFF58B721) : Colors.grey,
             ),
           ],
         ),

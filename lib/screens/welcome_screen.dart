@@ -43,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: '을 경험해 보세요! 🎉',
+                            text: '을 경험해 보세요!🎉',
                           ),
                         ],
                       ),
@@ -72,7 +72,7 @@ class WelcomeScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: const Color(0xFF58B721),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

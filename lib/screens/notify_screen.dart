@@ -115,7 +115,7 @@ class NotifyPage extends State<ReportSelectionScreen> {
             ElevatedButton(
               onPressed: selectedIndex != null ? _handleStart : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedIndex != null ? Colors.blue : Colors.grey,
+                backgroundColor: selectedIndex != null ? const Color(0xFF58B721) : Colors.grey,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -149,7 +149,7 @@ class NotifyPage extends State<ReportSelectionScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFF58B721) : Colors.grey.shade300,
             width: 2,
           ),
           boxShadow: [
@@ -191,7 +191,7 @@ class NotifyPage extends State<ReportSelectionScreen> {
             ),
             Icon(
               isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: isSelected ? Colors.blue : Colors.grey,
+              color: isSelected ? const Color(0xFF58B721) : Colors.grey,
             ),
           ],
         ),

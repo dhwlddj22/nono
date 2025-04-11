@@ -175,7 +175,7 @@ class CommunityScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => WritePostScreen()),
           );
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF58B721),
         child: Icon(Icons.edit, color: Colors.white),
         shape: CircleBorder(),
       ),

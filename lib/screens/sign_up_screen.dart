@@ -47,29 +47,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start, // 위치 수정
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 16),
             _buildTextField('이름', _nameController, false),
             SizedBox(height: 16),
             _buildTextField('이메일', _emailController, false),
             SizedBox(height: 16),
             _buildTextField('비밀번호', _passwordController, true),
-            SizedBox(height: 20),
+            SizedBox(height: 25),
             ElevatedButton(
               onPressed: _signUp,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: const Color(0xFF58B721),
                 minimumSize: Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: Text('가입하기', style: TextStyle(color: Colors.white, fontSize: 18)),
@@ -87,9 +88,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
       style: TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.blue),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        labelStyle: TextStyle(
+            color: const Color(0xFF58B721)
+        ),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+                color: const Color(0xFF58B721)
+            )
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+                color: const Color(0xFF58B721)
+            )
+        ),
         suffixIcon: isPassword
             ? IconButton(
           icon: Icon(

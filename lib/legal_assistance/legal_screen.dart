@@ -167,7 +167,7 @@ class LegalScreen extends StatelessWidget {
               );
             },
             style: TextButton.styleFrom(
-              backgroundColor: Colors.blue.shade100,
+              backgroundColor: Colors.blue.shade50,
               minimumSize: Size(double.infinity, 36),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(40),
@@ -175,7 +175,7 @@ class LegalScreen extends StatelessWidget {
             ),
             child: Text(
               "Detail",
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 14),
+              style: TextStyle(color: Colors.blue.shade400, fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
         ],

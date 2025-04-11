@@ -181,7 +181,13 @@ class _RecordScreenState extends State<RecordScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('NO!SE GUARD', style: TextStyle(color: Color(0xFF57CC1C), fontWeight: FontWeight.bold)),
+        title: Text('NO!SE GUARD'),
+        titleTextStyle: TextStyle(
+          color: const Color(0xFF58B721),
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.chat, color: Colors.white),

@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:lottie/lottie.dart';
 import 'NoiseAnalysisChatScreenWithNav.dart';
 import 'chat_history_screen.dart';
 import 'noise_analysis_screen.dart';
@@ -44,6 +45,25 @@ class _RecordScreenState extends State<RecordScreen> {
     await Permission.microphone.request();
   }
 
+  void _showLoadingDialog({required bool isSuccess}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: SizedBox(
+            width: 150,
+            height: 150,
+            child: Lottie.asset(
+              isSuccess ? 'assets/success.json' : 'assets/loading.json',
+              repeat: !isSuccess,
+            ),
+          ),
+        );
+      },
+    );
+  }
   Future<void> _startRecording() async {
     final dir = await getTemporaryDirectory();
     _recordFilePath = '${dir.path}/recorded_noise.aac';
@@ -68,52 +88,55 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
+    _showLoadingDialog(isSuccess: false);
+
     await _recorder.stopRecorder();
     await _noiseSubscription?.cancel();
     _stopwatch.stop();
     _timer.cancel();
 
-    setState(() {
-      _isRecording = false;
+    final file = File(_recordFilePath!);
+    final fileName = _recordFilePath!.split('/').last;
+
+    final ref = FirebaseStorage.instance
+        .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
+    await ref.putFile(file);
+
+    final averageDb = _calculateAverage();
+    final peakDb = _decibelValues.isNotEmpty
+        ? _decibelValues.reduce((a, b) => a > b ? a : b)
+        : averageDb;
+
+    await FirebaseFirestore.instance.collection('decibel_analysis').add({
+      'average_db': averageDb.toStringAsFixed(2),
+      'peak_db': peakDb.toStringAsFixed(2),
+      'timestamp': Timestamp.now(),
     });
 
-    if (_recordFilePath != null) {
-      final file = File(_recordFilePath!);
-      final fileName = _recordFilePath!.split('/').last;
+    final prompt = NoisePromptBuilder.build(
+      averageDb: averageDb,
+      peakDb: peakDb,
+    );
 
-      final ref = FirebaseStorage.instance
-          .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
-      await ref.putFile(file);
+    Navigator.pop(context); // 로딩 닫기
+    _showLoadingDialog(isSuccess: true); // 성공 애니메이션 보여주기
 
-      final averageDb = _calculateAverage();
-      final peakDb = _decibelValues.isNotEmpty
-          ? _decibelValues.reduce((a, b) => a > b ? a : b)
-          : averageDb;
+    await Future.delayed(Duration(seconds: 1)); // 1초 대기
 
-      await FirebaseFirestore.instance.collection('decibel_analysis').add({
-        'average_db': averageDb.toStringAsFixed(2),
-        'peak_db': peakDb.toStringAsFixed(2),
-        'timestamp': Timestamp.now(),
-      });
+    Navigator.pop(context); // 성공 애니메이션 닫기
 
-      final prompt = NoisePromptBuilder.build(
-        averageDb: averageDb,
-        peakDb: peakDb,
-      );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
+      ),
+    );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => NoiseAnalysisChatScreenWithNav(
-            initialInput: prompt,
-          ),
-        ),
-      );
-
+    setState(() {
+      _isRecording = false;
       _decibelValues.clear();
-    }
+    });
   }
-
 
   Future<void> _cancelRecording() async {
     await _recorder.stopRecorder();
@@ -219,7 +242,7 @@ class _RecordScreenState extends State<RecordScreen> {
           const SizedBox(height: 100),
           GestureDetector(
             onTap: _startRecording,
-            child: Image.asset('assets/record.png', width:120, height: 120),
+            child: Image.asset('assets/record.png', width: 120, height: 120),
           ),
         ],
       ),
@@ -240,14 +263,8 @@ class _RecordScreenState extends State<RecordScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "평균 데시벨 ",
-              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "${_calculateAverage().toStringAsFixed(2)} dB",
-              style: const TextStyle(color: Color(0xFF57CC1C), fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            Text("평균 데시벨 ", style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+            Text("${_calculateAverage().toStringAsFixed(2)} dB", style: const TextStyle(color: Color(0xFF57CC1C), fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 12),
@@ -256,40 +273,27 @@ class _RecordScreenState extends State<RecordScreen> {
           child: SizedBox(height: 160, child: _buildDecibelChart()),
         ),
         const SizedBox(height: 16),
-        Text(
-          _formatDuration(_stopwatch.elapsed),
-          style: const TextStyle(color: Colors.white, fontSize: 37, fontWeight: FontWeight.bold),
-        ),
+        Text(_formatDuration(_stopwatch.elapsed), style: const TextStyle(color: Colors.white, fontSize: 37, fontWeight: FontWeight.bold)),
         const SizedBox(height: 40),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreen()));
-              },
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreen())),
               child: SvgPicture.asset('assets/chat.svg', width: 38, height: 38),
             ),
             const SizedBox(width: 20),
             GestureDetector(
               onTap: _stopRecording,
-              child: SvgPicture.asset(
-                'assets/recording.svg',
-                width: 140,
-                height: 140,
-                fit: BoxFit.contain,
-                alignment: Alignment.center,
-              ),
+              child: SvgPicture.asset('assets/recording.svg', width: 140, height: 140),
             ),
-            const SizedBox(width:20),
+            const SizedBox(width: 20),
             GestureDetector(
               onTap: _cancelRecording,
               child: SvgPicture.asset('assets/trash.svg', width: 38, height: 38),
             ),
           ],
         ),
-
-
       ],
     );
   }

@@ -1,43 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'chat_detail_screen.dart';
 
 class ChatHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text("채팅 기록")),
+        body: Center(child: Text("로그인이 필요합니다.")),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("채팅 기록"),
-        backgroundColor: Colors.black,
-      ),
+      appBar: AppBar(title: Text("채팅 기록"), backgroundColor: Colors.black),
+      backgroundColor: Colors.black,
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('chat_history').orderBy('timestamp', descending: true).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('chat_history')
+            .where('userId', isEqualTo: currentUser.uid)
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+
+          final docs = snapshot.data!.docs;
+          final Map<String, List<QueryDocumentSnapshot>> grouped = {};
+
+          for (var doc in docs) {
+            final date = DateFormat('yy/MM/dd').format((doc['timestamp'] as Timestamp).toDate());
+            grouped.putIfAbsent(date, () => []).add(doc);
           }
 
-          var messages = snapshot.data!.docs;
+          return ListView(
+            children: grouped.entries.map((entry) {
+              final date = entry.key;
+              final firstMessage = entry.value.first['text'].toString().split('\n').first;
 
-          return ListView.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              var message = messages[index];
               return ListTile(
-                title: Text(message['text'], style: TextStyle(color: Colors.white)),
-                subtitle: Text(
-                  _formatTimestamp(message['timestamp']),
-                  style: TextStyle(color: Colors.grey),
-                ),
+                title: Text(firstMessage, style: TextStyle(color: Colors.white)),
+                subtitle: Text(date, style: TextStyle(color: Colors.grey)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatDetailScreen(dateKey: date),
+                    ),
+                  );
+                },
               );
-            },
+            }).toList(),
           );
         },
       ),
     );
-  }
-
-  String _formatTimestamp(Timestamp timestamp) {
-    DateTime date = timestamp.toDate();
-    return "${date.year % 100}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
   }
 }

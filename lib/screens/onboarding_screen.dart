@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'main_screen.dart'; // 메인 화면으로 이동
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'main_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -25,10 +26,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
     _OnboardingData(
       title: 'AI가\n녹음 파일을 분석해줘요',
-      description: '녹음된 파일은 자동으로 저장돼요\n언제든 다시 확인하고 활용할 수 있어요.',
+      description: '녹음된 파일은 자동으 저장돼요\n언제든 다시 확인하고 활용할 수 있어요.',
       imagePath: 'assets/onboarding3.png',
     ),
   ];
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentPage = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,26 +44,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 30),
-            // 우측 상단 점 인디케이터
-            Padding(
-              padding: const EdgeInsets.only(right: 24),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: _buildIndicator(),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 24),
+                child: SmoothPageIndicator(
+                  controller: _pageController,
+                  count: _pages.length,
+                  effect: WormEffect(
+                    dotHeight: 10,
+                    dotWidth: 10,
+                    spacing: 12,
+                    dotColor: Colors.grey.shade400,
+                    activeDotColor: Color(0xFF57CC1C),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            // 온보딩 페이지 뷰
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
                 itemCount: _pages.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
+                onPageChanged: _onPageChanged,
                 itemBuilder: (context, index) {
                   final page = _pages[index];
                   return Padding(
@@ -69,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: const TextStyle(
                             fontSize: 34,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF4CAF50),
+                            color: Color(0xFF57CC1C),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -93,10 +104,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               child: Image.asset(
                                 page.imagePath,
                                 fit: BoxFit.contain,
-                                width:
-                                MediaQuery.of(context).size.width * 0.8,
-                                height:
-                                MediaQuery.of(context).size.height * 0.30,
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height: MediaQuery.of(context).size.height * 0.30,
                               ),
                             ),
                           ),
@@ -108,7 +117,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // 시작하기 버튼
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: GestureDetector(
@@ -116,9 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ? () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => MainScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => MainScreen()),
                   );
                 }
                     : null,
@@ -147,24 +153,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 20),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIndicator() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(
-        _pages.length,
-            (index) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _currentPage == index ? Colors.green : Colors.grey,
-          ),
         ),
       ),
     );

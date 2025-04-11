@@ -8,6 +8,8 @@ import 'message.dart';
 import 'chat_bubble.dart';
 import 'openai_service.dart';
 import 'my_page_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class NoiseAnalysisChatScreen extends StatefulWidget {
   final String? initialInput;
@@ -43,13 +45,15 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   }
 
   void _addMessage(String content, MessageType type) {
+    final user = FirebaseAuth.instance.currentUser; // ✅ 현재 로그인된 사용자 가져오기
     final message = Message(content: content, type: type, timestamp: DateTime.now());
 
-    if (content.trim().isNotEmpty && !content.contains("�")) {
+    if (content.trim().isNotEmpty && user != null) {
       FirebaseFirestore.instance.collection('chat_history').add({
         'text': content,
         'type': type.toString().split('.').last,
         'timestamp': Timestamp.now(),
+        'userId': user.uid, // ✅ 사용자 UID 저장
       });
     }
 
@@ -57,6 +61,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       _messages.insert(0, message);
     });
   }
+
 
   Future<void> _sendMessage() async {
     final userInput = _controller.text.trim();

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // ✅ Firebase 추가
+import 'package:firebase_core/firebase_core.dart';
 import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp(); // ✅ Firebase 초기화
+    await Firebase.initializeApp();
   } catch (e) {
     print("🔥 Firebase 초기화 오류: $e");
   }
@@ -18,11 +18,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.black,
-        fontFamily: 'Pretendard', // 앱 전체에 Pretendard 폰트 적용
-        brightness: Brightness.dark, // 기존의 다크 테마 유지
+        fontFamily: 'Pretendard',
+        brightness: Brightness.dark,
       ),
-      home: SplashScreen(),
+      home: SplashScreen(), // ✅ 모든 진입은 스플래시에서 처리
     );
   }
 }

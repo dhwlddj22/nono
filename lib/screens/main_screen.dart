@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nono/screens/record_screen.dart';
-import 'noise_analysis_screen.dart';
-import 'noise_recorder_screen.dart';
 import 'notify_screen.dart';
 import 'community_screen.dart';
 import 'package:nono/legal_assistance/legal_screen.dart';

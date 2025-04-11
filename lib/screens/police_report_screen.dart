@@ -21,7 +21,7 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
     if (selectedIndex == 0) {
       final Uri smsUri = Uri(scheme: 'sms', path: '112', queryParameters: {
         'body':
-        '[층간소음 신고]\n주소: 서울시 ○○구 ○○동 ○○아파트 ○○동 ○○호\n신고 내용: 지속적인 층간소음 피해 발생\n시간대: 오늘 오후 8시부터 현재까지\n내용: 쿵쿵거리는 소리, 발망치, 가구 끄는 소리 반복\n피해 상황: 아기가 잠을 자지 못하고 있어 정신적으로 스트레스를 받고 있음',
+        '[층간소음 신고]\n주소: \n신고 내용: \n시간대: \n내용: \n피해 상황: ',
       });
       if (await canLaunchUrl(smsUri)) {
         await launchUrl(smsUri);

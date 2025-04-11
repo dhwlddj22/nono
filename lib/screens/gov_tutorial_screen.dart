@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import 'gov_assistance_screen.dart';
 import 'tutorial_text_styles.dart';
 
 class GovTutorialScreen extends StatefulWidget {
@@ -39,8 +40,12 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
   }
 
   Future<void> _onStart() async {
-    await _markAsSeen(); // ✅ 실제로 "시작하기" 눌렀을 때 저장
-    Navigator.pop(context, true); // true 반환하여 ReportSelectionScreen에서 확인
+    await _markAsSeen();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const GovAssistanceScreen()),
+    );
   }
 
   @override
@@ -62,7 +67,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                     dotWidth: 8,
                     spacing: 8,
                     dotColor: Colors.grey.shade700,
-                    activeDotColor: Colors.white,
+                    activeDotColor: Color(0xFF58B721),
                   ),
                 ),
               ),

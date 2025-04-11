@@ -13,6 +13,8 @@ import 'NoiseAnalysisChatScreenWithNav.dart';
 import 'chat_history_screen.dart';
 import 'noise_analysis_screen.dart';
 import 'my_page_screen.dart';
+import 'package:intl/intl.dart';
+import 'noise_prompt_builder.dart';
 
 class RecordScreen extends StatefulWidget {
   @override
@@ -84,17 +86,26 @@ class _RecordScreenState extends State<RecordScreen> {
       await ref.putFile(file);
 
       final averageDb = _calculateAverage();
+      final peakDb = _decibelValues.isNotEmpty
+          ? _decibelValues.reduce((a, b) => a > b ? a : b)
+          : averageDb;
 
       await FirebaseFirestore.instance.collection('decibel_analysis').add({
         'average_db': averageDb.toStringAsFixed(2),
+        'peak_db': peakDb.toStringAsFixed(2),
         'timestamp': Timestamp.now(),
       });
+
+      final prompt = NoisePromptBuilder.build(
+        averageDb: averageDb,
+        peakDb: peakDb,
+      );
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => NoiseAnalysisChatScreenWithNav(
-            initialInput: "평균 소음 수준은 ${averageDb.toStringAsFixed(2)} dB 입니다. 분석해줘.",
+            initialInput: prompt,
           ),
         ),
       );
@@ -102,6 +113,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _decibelValues.clear();
     }
   }
+
 
   Future<void> _cancelRecording() async {
     await _recorder.stopRecorder();

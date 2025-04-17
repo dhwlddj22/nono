@@ -26,6 +26,7 @@
     firebase_auth: ^5.5.1    # Firebase 인증
     firebase_storage: ^12.4.4 # Firebase 스토리지 (이미지 업로드)
     cloud_firestore: ^5.0.0 # Firestore (게시글 저장)
+    firebase_app_check: ^0.3.2+4
 
     # 🔹 카메라 & 갤러리에서 이미지 선택
     image_picker: ^1.0.7

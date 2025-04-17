@@ -45,7 +45,11 @@ class _RecordScreenState extends State<RecordScreen> {
     await Permission.microphone.request();
   }
 
-  void _showLoadingDialog({required bool isSuccess}) {
+  void _showLoadingDialog({
+    required bool isSuccess,
+    double width = 150,
+    double height = 150,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -53,8 +57,8 @@ class _RecordScreenState extends State<RecordScreen> {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: SizedBox(
-            width: 150,
-            height: 150,
+            width: width,
+            height: height,
             child: Lottie.asset(
               isSuccess ? 'assets/success.json' : 'assets/loading.json',
               repeat: !isSuccess,
@@ -64,6 +68,7 @@ class _RecordScreenState extends State<RecordScreen> {
       },
     );
   }
+
   Future<void> _startRecording() async {
     final dir = await getTemporaryDirectory();
     _recordFilePath = '${dir.path}/recorded_noise.aac';
@@ -88,7 +93,7 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
-    _showLoadingDialog(isSuccess: false);
+    _showLoadingDialog(isSuccess: false, width: 120, height: 120);
 
     await _recorder.stopRecorder();
     await _noiseSubscription?.cancel();
@@ -118,12 +123,11 @@ class _RecordScreenState extends State<RecordScreen> {
       peakDb: peakDb,
     );
 
-    Navigator.pop(context); // 로딩 닫기
-    _showLoadingDialog(isSuccess: true); // 성공 애니메이션 보여주기
+    Navigator.pop(context); // Close loading
+    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success
 
-    await Future.delayed(Duration(seconds: 1)); // 1초 대기
-
-    Navigator.pop(context); // 성공 애니메이션 닫기
+    await Future.delayed(Duration(seconds: 1));
+    Navigator.pop(context); // Close success
 
     Navigator.pushReplacement(
       context,
@@ -210,7 +214,6 @@ class _RecordScreenState extends State<RecordScreen> {
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
-
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.chat, color: Colors.white),

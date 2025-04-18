@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'message.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -8,22 +9,39 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isUser = message.type == MessageType.user || message.type == MessageType.file;
+    final isUser = message.type == MessageType.user || message.type == MessageType.audio;
 
-    final bubbleColor = message.type == MessageType.user
-        ? Colors.green
-        : message.type == MessageType.ai
-        ? Colors.white12
-        : Colors.green;
-
+    final bubbleColor = isUser ? Colors.green : Colors.white12;
     final align = isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
 
     Widget contentWidget;
 
-    if (message.type == MessageType.image) {
-      contentWidget = ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.network(message.content, width: 250),
+    if (message.type == MessageType.audio && message.url != null) {
+      contentWidget = GestureDetector(
+        onTap: () async {
+          final uri = Uri.parse(message.url!);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("파일을 열 수 없습니다.")),
+            );
+          }
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.attach_file, color: Colors.white),
+            SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                message.content,
+                style: TextStyle(color: Colors.white),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       );
     } else {
       contentWidget = Text(

@@ -54,6 +54,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
         'type': type.toString().split('.').last,
         'timestamp': Timestamp.now(),
         'userId': user.uid, // ✅ 사용자 UID 저장
+        if (type == MessageType.audio) 'url': content, // URL 저장
       });
     }
 
@@ -82,15 +83,24 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(type: FileType.audio);
     if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
+      final file = File(result.files.single.path!);
+      final fileName = 'recordings/${DateTime.now().toIso8601String()}.aac';
+      final ref = FirebaseStorage.instance.ref().child(fileName);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('이 버전에서는 오디오 파일 분석은 지원하지 않아요.')),
-      );
+      try {
+        await ref.putFile(file);
+        final downloadUrl = await ref.getDownloadURL();
+
+        _addMessage(downloadUrl, MessageType.audio);
+      } catch (e) {
+        print('파일 업로드 실패: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('파일 업로드에 실패했습니다.')),
+        );
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

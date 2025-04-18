@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,6 +16,7 @@ import 'noise_analysis_screen.dart';
 import 'my_page_screen.dart';
 import 'package:intl/intl.dart';
 import 'noise_prompt_builder.dart';
+import 'openai_service.dart';
 
 class RecordScreen extends StatefulWidget {
   @override
@@ -46,7 +48,10 @@ class _RecordScreenState extends State<RecordScreen> {
 
   Future<void> _startRecording() async {
     final dir = await getTemporaryDirectory();
-    _recordFilePath = '${dir.path}/recorded_noise.aac';
+    final now = DateTime.now();
+    final formattedTime = DateFormat('yyyy-MM-dd_HH-mm-ss').format(now);
+    _recordFilePath = '${dir.path}/$formattedTime.aac';
+
 
     await _recorder.startRecorder(toFile: _recordFilePath);
     _stopwatch.reset();
@@ -70,8 +75,6 @@ class _RecordScreenState extends State<RecordScreen> {
   Future<void> _stopRecording() async {
     await _recorder.stopRecorder();
     await _noiseSubscription?.cancel();
-    _stopwatch.stop();
-    _timer.cancel();
 
     setState(() {
       _isRecording = false;
@@ -81,38 +84,56 @@ class _RecordScreenState extends State<RecordScreen> {
       final file = File(_recordFilePath!);
       final fileName = _recordFilePath!.split('/').last;
 
-      final ref = FirebaseStorage.instance
-          .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
+      // 🔼 Firebase Storage 업로드
+      final ref = FirebaseStorage.instance.ref('uploads/$fileName');
       await ref.putFile(file);
 
-      final averageDb = _calculateAverage();
-      final peakDb = _decibelValues.isNotEmpty
-          ? _decibelValues.reduce((a, b) => a > b ? a : b)
-          : averageDb;
+      final downloadUrl = await ref.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('decibel_analysis').add({
-        'average_db': averageDb.toStringAsFixed(2),
-        'peak_db': peakDb.toStringAsFixed(2),
+      // 🔽 Firestore 파일 메시지 저장
+      await FirebaseFirestore.instance.collection('chat_history').add({
+        'text': fileName,
+        'type': 'audio',
+        'url': downloadUrl,
+        'userId': FirebaseAuth.instance.currentUser?.uid,
         'timestamp': Timestamp.now(),
       });
 
-      final prompt = NoisePromptBuilder.build(
-        averageDb: averageDb,
-        peakDb: peakDb,
-      );
+      // 📊 평균 데시벨 계산
+      final averageDb = _calculateAverage();
 
+      // 🔽 분석 요청 메시지 저장 (MessageType.user)
+      final prompt =
+          "${DateFormat('yyyy년 MM월 dd일 HH시 mm분').format(DateTime.now())}에 측정된 평균 소음은 ${averageDb.toStringAsFixed(2)} dB입니다. 분석해줘.";
+      await FirebaseFirestore.instance.collection('chat_history').add({
+        'text': prompt,
+        'type': 'user',
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'timestamp': Timestamp.now(),
+      });
+
+      // 🤖 GPT 분석 응답
+      final reply = await OpenAIService.analyzeNoise(prompt);
+      await FirebaseFirestore.instance.collection('chat_history').add({
+        'text': reply ?? "AI 응답 실패",
+        'type': 'ai',
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'timestamp': Timestamp.now(),
+      });
+
+      _decibelValues.clear();
+
+      // ✅ 채팅 화면으로 이동 (자동 메시지 포함)
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => NoiseAnalysisChatScreenWithNav(
-            initialInput: prompt,
+          builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt, // ✅ 꼭 전달되어야 함
           ),
         ),
       );
-
-      _decibelValues.clear();
     }
   }
+
 
 
   Future<void> _cancelRecording() async {

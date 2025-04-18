@@ -77,7 +77,6 @@ class _RecordScreenState extends State<RecordScreen> {
     final formattedTime = DateFormat('yyyy-MM-dd_HH-mm-ss').format(now);
     _recordFilePath = '${dir.path}/$formattedTime.aac';
 
-
     await _recorder.startRecorder(toFile: _recordFilePath);
     _stopwatch.reset();
     _stopwatch.start();
@@ -106,64 +105,22 @@ class _RecordScreenState extends State<RecordScreen> {
     final file = File(_recordFilePath!);
     final fileName = _recordFilePath!.split('/').last;
 
+    // 🔼 Firebase Storage 업로드
     final ref = FirebaseStorage.instance
         .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
     await ref.putFile(file);
+    final downloadUrl = await ref.getDownloadURL();
 
+    // 🔽 Firestore 파일 메시지 저장
+    await FirebaseFirestore.instance.collection('chat_history').add({
+      'text': fileName,
+      'type': 'audio',
+      'url': downloadUrl,
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'timestamp': Timestamp.now(),
+    });
 
-      // 🔼 Firebase Storage 업로드
-      final ref = FirebaseStorage.instance.ref('uploads/$fileName');
-      await ref.putFile(file);
-
-      final downloadUrl = await ref.getDownloadURL();
-
-      // 🔽 Firestore 파일 메시지 저장
-      await FirebaseFirestore.instance.collection('chat_history').add({
-        'text': fileName,
-        'type': 'audio',
-        'url': downloadUrl,
-        'userId': FirebaseAuth.instance.currentUser?.uid,
-        'timestamp': Timestamp.now(),
-      });
-
-      // 📊 평균 데시벨 계산
-      final averageDb = _calculateAverage();
-
-      // 🔽 분석 요청 메시지 저장 (MessageType.user)
-      final prompt =
-          "${DateFormat('yyyy년 MM월 dd일 HH시 mm분').format(DateTime.now())}에 측정된 평균 소음은 ${averageDb.toStringAsFixed(2)} dB입니다. 분석해줘.";
-      await FirebaseFirestore.instance.collection('chat_history').add({
-        'text': prompt,
-        'type': 'user',
-        'userId': FirebaseAuth.instance.currentUser?.uid,
-        'timestamp': Timestamp.now(),
-      });
-
-      // 🤖 GPT 분석 응답
-      final reply = await OpenAIService.analyzeNoise(prompt);
-      await FirebaseFirestore.instance.collection('chat_history').add({
-        'text': reply ?? "AI 응답 실패",
-        'type': 'ai',
-        'userId': FirebaseAuth.instance.currentUser?.uid,
-        'timestamp': Timestamp.now(),
-      });
-
-      _decibelValues.clear();
-
-      // ✅ 채팅 화면으로 이동 (자동 메시지 포함)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt, // ✅ 꼭 전달되어야 함
-          ),
-        ),
-      );
-    }
-  }
-
-
-
-
+    // 📊 평균 및 최고 데시벨 계산
     final averageDb = _calculateAverage();
     final peakDb = _decibelValues.isNotEmpty
         ? _decibelValues.reduce((a, b) => a > b ? a : b)
@@ -180,10 +137,25 @@ class _RecordScreenState extends State<RecordScreen> {
       peakDb: peakDb,
     );
 
+    await FirebaseFirestore.instance.collection('chat_history').add({
+      'text': prompt,
+      'type': 'user',
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'timestamp': Timestamp.now(),
+    });
+
+    final reply = await OpenAIService.analyzeNoise(prompt);
+    await FirebaseFirestore.instance.collection('chat_history').add({
+      'text': reply ?? "AI 응답 실패",
+      'type': 'ai',
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'timestamp': Timestamp.now(),
+    });
+
     Navigator.pop(context); // Close loading
     _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success
 
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     Navigator.pop(context); // Close success
 
     Navigator.pushReplacement(

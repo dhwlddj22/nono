@@ -80,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: const TextStyle(
                             fontSize: 34,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF57CC1C),
+                            color: const Color(0xFF58B721),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -133,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   height: 50,
                   decoration: BoxDecoration(
                     color: _currentPage == _pages.length - 1
-                        ? Colors.blue
+                        ? const Color(0xFF58B721)
                         : Colors.grey[800],
                     borderRadius: BorderRadius.circular(12),
                   ),

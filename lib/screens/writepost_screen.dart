@@ -252,7 +252,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                       height: 55,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: widget.isReporting ? Colors.red : Colors.blue,
+                          backgroundColor: widget.isReporting ? Colors.red : const Color(0xFF58B721),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                         ),
                         onPressed: _submitPost,

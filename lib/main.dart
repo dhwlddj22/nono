@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/splash_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'screens/login_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    print("🔥 Firebase 초기화 오류: $e");
-  }
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -21,7 +20,21 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Pretendard',
         brightness: Brightness.dark,
       ),
-      home: SplashScreen(), // ✅ 모든 진입은 스플래시에서 처리
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              backgroundColor: Colors.black,
+              body: Center(child: CircularProgressIndicator(color: Colors.green)),
+            );
+          }
+          if (snapshot.hasData) {
+            return MainScreen();
+          }
+          return LoginScreen();
+        },
+      ),
     );
   }
 }

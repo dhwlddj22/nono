@@ -50,6 +50,10 @@ class _CounselingScreenState extends State<CounselingScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -86,8 +90,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
             ElevatedButton(
               onPressed: selectedIndex != null ? _handleStart : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: selectedIndex != null ? Colors.blue : Colors
-                    .grey,
+                backgroundColor: selectedIndex != null ? const Color(0xFF58B721) : Colors.grey,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -123,7 +126,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(26),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.transparent,
+            color: isSelected ? const Color(0xFF58B721) : Colors.transparent,
             width: 2.5,
           ),
         ),
@@ -148,7 +151,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
                 Icon(
                   isSelected ? Icons.check_circle : Icons
                       .radio_button_unchecked,
-                  color: isSelected ? Colors.blue : Colors.grey,
+                  color: isSelected ? const Color(0xFF58B721) : Colors.grey,
                 ),
               ],
             ),

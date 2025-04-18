@@ -111,7 +111,8 @@ class ProductDetailScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => _launchUrl(product.link),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color(0xFF58B721),
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

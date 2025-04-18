@@ -92,7 +92,8 @@
       - assets/phone.png
       - assets/warning_icon.png
       - assets/big_police.png
-      - assets/loading_animation.json
+      - assets/loading.json
+      - assets/success.json
       - assets/record.png
       - assets/trash.svg
       - assets/recording.svg

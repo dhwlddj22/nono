@@ -126,7 +126,7 @@ class _RecordScreenState extends State<RecordScreen> {
     Navigator.pop(context); // Close loading
     _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success
 
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: 3));
     Navigator.pop(context); // Close success
 
     Navigator.pushReplacement(

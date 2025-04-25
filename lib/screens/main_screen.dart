@@ -37,19 +37,26 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         items: [
-          _buildNavItem(Icons.lightbulb_outline, "원터치 신고"),
-          _buildNavItem(Icons.chat_bubble_outline, "소음게시판"),
-          _buildNavItem(Icons.adb, "AI소음측정"),
-          _buildNavItem(Icons.gavel, "법률지원"),
-          _buildNavItem(Icons.shopping_bag_outlined, "소음마켓"),
+          _buildNavItem('assets/bottom_nav/one_touch_report.png', "원터치 신고"),
+          _buildNavItem('assets/bottom_nav/noise_community.png', "소음게시판"),
+          _buildNavItem('assets/bottom_nav/ai_noise.png', "AI소음측정"),
+          _buildNavItem('assets/bottom_nav/law_support.png', "법률지원"),
+          _buildNavItem('assets/bottom_nav/noise_market.png', "소음마켓"),
         ],
       ),
     );
   }
 
-  BottomNavigationBarItem _buildNavItem(IconData icon, String label) {
+  BottomNavigationBarItem _buildNavItem(String assetPath, String label) {
     return BottomNavigationBarItem(
-      icon: Icon(icon),
+      icon: ImageIcon(
+        AssetImage(assetPath),
+        color: Colors.white,
+      ),
+      activeIcon: ImageIcon(
+        AssetImage(assetPath),
+        color: Color(0xFF57CC1C),
+      ),
       label: label,
     );
   }

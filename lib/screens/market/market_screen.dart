@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nono/domain/product.dart';
-import 'package:nono/market/market_detail_screen.dart';
+import 'package:nono/screens/market/product.dart';
+import 'package:nono/screens/market/market_detail_screen.dart';
 
 class MarketPage extends StatelessWidget {
   final List<Product> products = [

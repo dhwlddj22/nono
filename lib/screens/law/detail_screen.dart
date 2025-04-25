@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nono/domain/lawyer.dart';
+import 'package:nono/screens/law/lawyer.dart';
 
 class LawyerDetailScreen extends StatelessWidget {
   final Lawyer lawyer;

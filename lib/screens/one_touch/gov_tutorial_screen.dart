@@ -95,8 +95,8 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                       ],
                     ),
                     imageRow: [
-                      Image.asset('assets/tutorial_1_1.png', width: 130),
-                      Image.asset('assets/tutorial_1_2.png', width: 130),
+                      Image.asset('assets/onboarding/gov_onboarding/tutorial_1_1.png', width: 130),
+                      Image.asset('assets/onboarding/gov_onboarding/tutorial_1_2.png', width: 130),
                     ],
                   ),
                   _buildPage(
@@ -113,7 +113,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Image.asset('assets/tutorial_2.png', width: 340, height: 300),
+                          Image.asset('assets/onboarding/gov_onboarding/tutorial_2.png', width: 340, height: 300),
                         ],
                       ),
                     ],
@@ -129,7 +129,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                       style: tutorialBodyStyle,
                     ),
                     imageRow: [
-                      Image.asset('assets/tutorial_3.png', width: 250),
+                      Image.asset('assets/onboarding/gov_onboarding/tutorial_3.png', width: 250),
                     ],
                   ),
                 ],

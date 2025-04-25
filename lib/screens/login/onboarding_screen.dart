@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'main_screen.dart';
+import '../main_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -17,17 +17,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingData(
       title: '실시간 녹음\n소음 측정',
       description: '내가 느끼는 불쾌한 소음,\n수치로 정확하게 확인해보세요.',
-      imagePath: 'assets/onboarding2.png',
+      imagePath: 'assets/onboarding/signup_onboarding/onboarding2.png',
     ),
     _OnboardingData(
       title: '녹음 파일\n안전하게 저장하기',
       description: '녹음된 파일은 자동으로 저장돼요\n언제든 다시 확인하고 활용할 수 있어요.',
-      imagePath: 'assets/onboarding1.png',
+      imagePath: 'assets/onboarding/signup_onboarding/onboarding1.png',
     ),
     _OnboardingData(
       title: 'AI가\n녹음 파일을 분석해줘요',
       description: '녹음된 파일은 자동으 저장돼요\n언제든 다시 확인하고 활용할 수 있어요.',
-      imagePath: 'assets/onboarding3.png',
+      imagePath: 'assets/onboarding/signup_onboarding/onboarding3.png',
     ),
   ];
 

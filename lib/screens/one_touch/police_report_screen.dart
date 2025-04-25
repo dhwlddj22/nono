@@ -62,7 +62,7 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset('assets/big_police.png', width: 64),
+                Image.asset('assets/one_touch/one_touch_police/big_police.png', width: 64),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -95,7 +95,7 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Image.asset('assets/warning_icon.png', width: 14),
+                          Image.asset('assets/one_touch/one_touch_police/warning_icon.png', width: 14),
                         ]
                       ),
                     ],
@@ -110,13 +110,13 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
               description:
               '층간소음 신고 문자 양식을 바탕으로\n간편하게 작성할 수 있어요.',
               example: '예시)\n주소: 서울시 ○○구 ○○동 ○○아파트 ○○동 ○○호\n신고 내용: 지속적인 층간소음 피해 발생\n시간대: 오늘 오후 8시부터 현재까지\n내용: 쿵쿵거리는 소리, 발망치, 가구 끄는 소리 반복\n피해 상황: 아기가 잠을 자지 못하고 있어 정신적으로 스트레스를 받고 있음',
-              imagePath: 'assets/message.png',
+              imagePath: 'assets/one_touch/one_touch_police/message.png',
             ),
             _buildSelectableCard(
               index: 1,
               title: '전화로',
               description: '한 번의 클릭으로 경찰에 전화할 수 있어요.',
-              imagePath: 'assets/phone.png',
+              imagePath: 'assets/one_touch/one_touch_police/phone.png',
             ),
             const Spacer(),
             ElevatedButton(

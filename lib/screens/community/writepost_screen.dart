@@ -174,11 +174,11 @@ class _WritePostScreenState extends State<WritePostScreen> {
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Image.asset('assets/close.png', width: 40, height: 40),
+                    child: Image.asset('assets/community/close.png', width: 40, height: 40),
                   ),
                   GestureDetector(
                     onTap: _showImageSourceActionSheet,
-                    child: Image.asset('assets/camera.png', width: 40, height: 40),
+                    child: Image.asset('assets/community/camera.png', width: 40, height: 40),
                   ),
                 ],
               ),

@@ -3,9 +3,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:nono/screens/gov_tutorial_screen.dart';
-import 'package:nono/screens/gov_assistance_screen.dart';
-import 'package:nono/screens/police_report_screen.dart';
+import 'package:nono/screens/one_touch/gov_tutorial_screen.dart';
+import 'package:nono/screens/one_touch/gov_assistance_screen.dart';
+import 'package:nono/screens/one_touch/police_report_screen.dart';
 
 class ReportSelectionScreen extends StatefulWidget {
   const ReportSelectionScreen({super.key});
@@ -94,19 +94,19 @@ class NotifyPage extends State<ReportSelectionScreen> {
                     index: 0,
                     title: "관리사무소 전화",
                     description: "거주지 관리사무소에 직접 전화하여\n층간소음 문제를 문의하세요.\n현재 살고 있는 주택을 검색 후\n단지정보에서 전화번호를 탭하여 전화하세요.",
-                    imagePath: "assets/call.png",
+                    imagePath: "assets/one_touch/one_touch_main/call.png",
                   ),
                   _buildSelectableCard(
                     index: 1,
                     title: "정부기관 도움",
                     description: "정부 운영 층간소음 상담센터로 연결됩니다.\n신고 및 상담을 요청할 수 있어요.",
-                    imagePath: "assets/gov.png",
+                    imagePath: "assets/one_touch/one_touch_main/gov.png",
                   ),
                   _buildSelectableCard(
                     index: 2,
                     title: "경찰에 신고하기",
                     description: "소음이 심각할 경우 112에 전화하거나 문자로 신고할 수 있어요.",
-                    imagePath: "assets/police.png",
+                    imagePath: "assets/one_touch/one_touch_main/police.png",
                   ),
                 ],
               ),

@@ -10,7 +10,7 @@ class MarketPage extends StatelessWidget {
       shortDescription: "이어플러그",
       description: "숙면을 위한 최고의 아이템입니다.",
       price: "1,000원",
-      image: "assets/products/이어플러그.jpeg",
+      image: "assets/market/products/이어플러그.jpeg",
       rating: 4.5,
       reviews: 6800,
       link: "https://example.com/rug",
@@ -21,7 +21,7 @@ class MarketPage extends StatelessWidget {
       shortDescription: "벽에 붙여 소음을 차단하는 패널",
       description: "흡음재로 제작되어 소음을 차단하고, 공간을 더욱 조용하게 만들어주는 방음 패널입니다.",
       price: "39,900원",
-      image: "assets/products/방음폼.jpeg",
+      image: "assets/market/products/방음폼.jpeg",
       rating: 4.8,
       reviews: 15234,
       link: "https://example.com/soundproof_panel",
@@ -32,7 +32,7 @@ class MarketPage extends StatelessWidget {
       shortDescription: "소음과 빛을 차단하는 방음 커튼",
       description: "특수한 방음 소재가 적용된 커튼으로, 외부 소음을 효과적으로 줄여 조용한 환경을 조성해줍니다.",
       price: "29,900원",
-      image: "assets/products/두꺼운 커튼.jpeg",
+      image: "assets/market/products/두꺼운 커튼.jpeg",
       rating: 4.6,
       reviews: 52346,
       link: "https://example.com/thick_curtain",
@@ -43,7 +43,7 @@ class MarketPage extends StatelessWidget {
       shortDescription: "문틈 소음을 줄여주는 실리콘 테이프",
       description: "문틈 사이의 공간을 밀폐하여 소음과 외부 공기를 차단해 주는 방음 테이프입니다.",
       price: "9,900원",
-      image: "assets/products/방음 문틈 테이프.jpeg",
+      image: "assets/market/products/방음 문틈 테이프.jpeg",
       rating: 4.7,
       reviews: 45878,
       link: "https://example.com/door_tape",
@@ -54,7 +54,7 @@ class MarketPage extends StatelessWidget {
       shortDescription: "어린이 소음 방지를 위한 쿠션 매트",
       description: "특수 소재로 제작된 층간소음 방지 매트로, 아이들의 뛰는 소음을 효과적으로 줄여줍니다.",
       price: "59,900원",
-      image: "assets/products/층간소음 매트.jpeg",
+      image: "assets/market/products/층간소음 매트.jpeg",
       rating: 4.9,
       reviews: 33566,
       link: "https://example.com/floor_mat",
@@ -65,7 +65,7 @@ class MarketPage extends StatelessWidget {
       shortDescription: "집중력을 높여주는 노이즈 캔슬링 이어폰",
       description: "액티브 노이즈 캔슬링 기술이 적용되어 주변 소음을 차단하고 몰입도를 높여주는 이어폰입니다.",
       price: "99,900원",
-      image: "assets/products/소음차단이어폰.jpeg",
+      image: "assets/market/products/소음차단이어폰.jpeg",
       rating: 4.8,
       reviews: 27344,
       link: "https://example.com/noise_canceling_earphones",
@@ -94,7 +94,7 @@ class MarketPage extends StatelessWidget {
             const Row(
               children: [
                 Image(
-                  image: AssetImage("assets/market.png"), // 이미지 경로
+                  image: AssetImage("assets/market/market.png"), // 이미지 경로
                   width: 40, // 아이콘과 비슷한 크기
                   height: 40,
                 ),

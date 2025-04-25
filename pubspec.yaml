@@ -17,7 +17,6 @@
     lottie: ^3.3.1
     flutter_svg: ^2.0.7
 
-
     # 🔹 아이콘 패키지
     cupertino_icons: ^1.0.8
 
@@ -58,47 +57,20 @@
     uses-material-design: true
 
     assets:
-      - assets/logo.png
-      - assets/thumbs_up.png
-      - assets/close.png
-      - assets/camera.png
-      - assets/Image.png
-      - assets/onboarding1.png
-      - assets/onboarding2.png
-      - assets/onboarding3.png
-      - assets/products/두꺼운 커튼.jpeg
-      - assets/products/방음 문틈 테이프.jpeg
-      - assets/products/방음폼.jpeg
-      - assets/products/소음차단이어폰.jpeg
-      - assets/products/이어플러그.jpeg
-      - assets/products/층간소음 매트.jpeg
-      - assets/lawyers/곽두팔.png
-      - assets/lawyers/김도윤.png
-      - assets/lawyers/김민지.png
-      - assets/lawyers/송윤섭.png
-      - assets/market.png
-      - assets/call.png
-      - assets/gov.png
-      - assets/police.png
-      - assets/tutorial_1_1.png
-      - assets/tutorial_1_2.png
-      - assets/tutorial_2.png
-      - assets/tutorial_3.png
-      - assets/consultation.png
-      - assets/form_icon.png
-      - assets/noise_meter.png
-      - assets/call_consult.png
-      - assets/web_consult.png
-      - assets/message.png
-      - assets/phone.png
-      - assets/warning_icon.png
-      - assets/big_police.png
-      - assets/loading.json
-      - assets/success.json
-      - assets/record.png
-      - assets/trash.svg
-      - assets/recording.svg
-      - assets/chat.svg
+      - assets/
+      - assets/community/
+      - assets/lawyers/
+      - assets/market/
+      - assets/market/products/
+      - assets/noise_main/
+      - assets/onboarding/gov_onboarding/
+      - assets/onboarding/signup_onboarding/
+      - assets/one_touch/one_touch_gov/
+      - assets/one_touch/one_touch_main/
+      - assets/one_touch/one_touch_police/
+
+
+
 
     fonts:
       - family: Pretendard

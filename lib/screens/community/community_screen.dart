@@ -110,7 +110,7 @@ class CommunityScreen extends StatelessWidget {
                                           height: 100,
                                         ),
                                       )
-                                          : Image.asset('assets/Image.png', width: 30, height: 30),
+                                          : Image.asset('assets/community/image.png', width: 30, height: 30),
                                     ),
                                     SizedBox(width: 12),
                                     Expanded(

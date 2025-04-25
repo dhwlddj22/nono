@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'message.dart';
-import 'chat_bubble.dart';
+import 'package:nono/screens/noise_main/message.dart';
+import 'package:nono/screens/noise_main/chat_bubble.dart';
 import 'openai_service.dart';
 
 class ChatDetailScreen extends StatefulWidget {

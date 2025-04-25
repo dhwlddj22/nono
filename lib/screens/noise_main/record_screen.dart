@@ -12,11 +12,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:lottie/lottie.dart';
 import 'NoiseAnalysisChatScreenWithNav.dart';
-import 'chat_history_screen.dart';
+import 'package:nono/screens/noise_main/chat_history_screen.dart';
 import 'noise_analysis_screen.dart';
 import 'my_page_screen.dart';
 import 'package:intl/intl.dart';
-import 'noise_prompt_builder.dart';
+import 'package:nono/screens/noise_main/noise_prompt_builder.dart';
 import 'openai_service.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -274,7 +274,7 @@ class _RecordScreenState extends State<RecordScreen> {
           const SizedBox(height: 100),
           GestureDetector(
             onTap: _startRecording,
-            child: Image.asset('assets/record.png', width: 120, height: 120),
+            child: Image.asset('assets/noise_main/record.png', width: 120, height: 120),
           ),
         ],
       ),
@@ -312,17 +312,17 @@ class _RecordScreenState extends State<RecordScreen> {
           children: [
             GestureDetector(
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreen())),
-              child: SvgPicture.asset('assets/chat.svg', width: 38, height: 38),
+              child: SvgPicture.asset('assets/noise_main/chat.svg', width: 38, height: 38),
             ),
             const SizedBox(width: 20),
             GestureDetector(
               onTap: _stopRecording,
-              child: SvgPicture.asset('assets/recording.svg', width: 140, height: 140),
+              child: SvgPicture.asset('assets/noise_main/recording.svg', width: 140, height: 140),
             ),
             const SizedBox(width: 20),
             GestureDetector(
               onTap: _cancelRecording,
-              child: SvgPicture.asset('assets/trash.svg', width: 38, height: 38),
+              child: SvgPicture.asset('assets/noise_main/trash.svg', width: 38, height: 38),
             ),
           ],
         ),

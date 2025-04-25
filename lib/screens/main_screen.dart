@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nono/screens/record_screen.dart';
-import 'notify_screen.dart';
-import 'community_screen.dart';
+import 'package:nono/screens/noise_main/record_screen.dart';
+import 'one_touch/notify_screen.dart';
+import 'community/community_screen.dart';
 import 'package:nono/legal_assistance/legal_screen.dart';
 import 'package:nono/market/market_screen.dart';
 

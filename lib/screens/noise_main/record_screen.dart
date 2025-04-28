@@ -62,7 +62,7 @@ class _RecordScreenState extends State<RecordScreen> {
             width: width,
             height: height,
             child: Lottie.asset(
-              isSuccess ? 'assets/success.json' : 'assets/loading.json',
+              isSuccess ? 'assets/noise_main/success.json' : 'assets/noise_main/loading.json',
               repeat: !isSuccess,
             ),
           ),

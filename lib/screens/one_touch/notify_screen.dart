@@ -3,18 +3,38 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:nono/screens/one_touch/gov_tutorial_screen.dart';
-import 'package:nono/screens/one_touch/gov_assistance_screen.dart';
-import 'package:nono/screens/one_touch/police_report_screen.dart';
+import 'gov_tutorial_screen.dart';
+import 'gov_assistance_screen.dart';
+import 'police_report_screen.dart';
 
-class ReportSelectionScreen extends StatefulWidget {
+class ReportSelectionScreen extends StatelessWidget {
   const ReportSelectionScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (settings) {
+        if (settings.name == '/') {
+          return MaterialPageRoute(builder: (_) => const _ReportSelectionHome());
+        } else if (settings.name == '/gov') {
+          return MaterialPageRoute(builder: (_) => const GovAssistanceScreen());
+        } else if (settings.name == '/police') {
+          return MaterialPageRoute(builder: (_) => const PoliceReportScreen());
+        }
+        return MaterialPageRoute(builder: (_) => const _ReportSelectionHome());
+      },
+    );
+  }
+}
+
+class _ReportSelectionHome extends StatefulWidget {
+  const _ReportSelectionHome();
 
   @override
   NotifyPage createState() => NotifyPage();
 }
 
-class NotifyPage extends State<ReportSelectionScreen> {
+class NotifyPage extends State<_ReportSelectionHome> {
   int? selectedIndex;
 
   void selectItem(int index) {
@@ -29,10 +49,7 @@ class NotifyPage extends State<ReportSelectionScreen> {
     } else if (selectedIndex == 1) {
       _handleGovSupport(); // 🔥 튜토리얼 체크 함수
     } else if (selectedIndex == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PoliceReportScreen()),
-      );
+      Navigator.of(context).pushNamed('/police');
     }
   }
 
@@ -45,23 +62,16 @@ class NotifyPage extends State<ReportSelectionScreen> {
     final seen = snapshot.data()?['govTutorialSeen'] ?? false;
 
     if (!seen) {
-      final result = await Navigator.push(
-        context,
+      final result = await Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const GovTutorialScreen()),
       );
 
       if (result == true) {
         await docRef.set({'govTutorialSeen': true}, SetOptions(merge: true));
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const GovAssistanceScreen()),
-        );
+        Navigator.of(context).pushNamed('/gov');
       }
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const GovAssistanceScreen()),
-      );
+      Navigator.of(context).pushNamed('/gov');
     }
   }
 

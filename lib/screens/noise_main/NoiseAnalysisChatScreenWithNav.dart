@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../main_screen.dart';
 import 'noise_analysis_screen.dart';
 
+
 class NoiseAnalysisChatScreenWithNav extends StatelessWidget {
   final String? initialInput;
 
@@ -11,7 +12,7 @@ class NoiseAnalysisChatScreenWithNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NoiseAnalysisChatScreen(initialInput: initialInput),
+        body: NoiseAnalysisChatScreen(initialInput: initialInput),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.black,
           selectedItemColor: Colors.green,
@@ -19,15 +20,12 @@ class NoiseAnalysisChatScreenWithNav extends StatelessWidget {
           currentIndex: 2,
           type: BottomNavigationBarType.fixed,
           onTap: (index) {
-            // 그냥 뒤로 가기 (RecordScreen으로 복귀)
-            if (index != 2) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => MainScreen()), // MainScreen 기본으로 이동
-              );
-            } else {
-              Navigator.pop(context); // 현재 페이지 pop
-            }
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MainScreen(selectedIndex: index),
+              ),
+            );
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.lightbulb_outline), label: "원터치 신고"),

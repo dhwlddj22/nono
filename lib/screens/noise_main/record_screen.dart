@@ -97,6 +97,8 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
+    _stopwatch.stop();       // ✅ 가장 먼저 중지
+    _timer.cancel();         // ✅ 타이머도 중지
     _showLoadingDialog(isSuccess: false, width: 120, height: 120);
 
     await _recorder.stopRecorder();
@@ -105,13 +107,10 @@ class _RecordScreenState extends State<RecordScreen> {
     final file = File(_recordFilePath!);
     final fileName = _recordFilePath!.split('/').last;
 
-    // 🔼 Firebase Storage 업로드
-    final ref = FirebaseStorage.instance
-        .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
+    final ref = FirebaseStorage.instance.ref('uploads/$fileName');
     await ref.putFile(file);
     final downloadUrl = await ref.getDownloadURL();
 
-    // 🔽 Firestore 파일 메시지 저장
     await FirebaseFirestore.instance.collection('chat_history').add({
       'text': fileName,
       'type': 'audio',
@@ -120,7 +119,6 @@ class _RecordScreenState extends State<RecordScreen> {
       'timestamp': Timestamp.now(),
     });
 
-    // 📊 평균 및 최고 데시벨 계산
     final averageDb = _calculateAverage();
     final peakDb = _decibelValues.isNotEmpty
         ? _decibelValues.reduce((a, b) => a > b ? a : b)
@@ -152,11 +150,10 @@ class _RecordScreenState extends State<RecordScreen> {
       'timestamp': Timestamp.now(),
     });
 
-    Navigator.pop(context); // Close loading
-    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success
-
+    Navigator.pop(context); // close loading
+    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // success
     await Future.delayed(const Duration(seconds: 3));
-    Navigator.pop(context); // Close success
+    Navigator.pop(context); // close success
 
     Navigator.pushReplacement(
       context,
@@ -170,6 +167,7 @@ class _RecordScreenState extends State<RecordScreen> {
       _decibelValues.clear();
     });
   }
+
 
   Future<void> _cancelRecording() async {
     await _recorder.stopRecorder();

@@ -6,12 +6,16 @@ import 'package:nono/legal_assistance/legal_screen.dart';
 import 'package:nono/market/market_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  final int selectedIndex; // ✅ 추가
+
+  MainScreen({this.selectedIndex = 2}); // ✅ 기본값: 2 (AI 소음측정)
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 2; // 기본값: AI 소음 측정 페이지
+  late int _selectedIndex; // ✅ 추가
 
   final List<Widget> _pages = [
     ReportSelectionScreen(),
@@ -20,6 +24,12 @@ class _MainScreenState extends State<MainScreen> {
     LegalScreen(),
     MarketPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex; // ✅ 외부에서 받은 값으로 초기화
+  }
 
   @override
   Widget build(BuildContext context) {

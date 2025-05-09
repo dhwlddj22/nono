@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:nono/screens/noise_main/message.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'message.dart';
 
 class ChatBubble extends StatelessWidget {
   final Message message;
@@ -10,7 +11,6 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.type == MessageType.user || message.type == MessageType.audio;
-
     final bubbleColor = isUser ? Colors.green : Colors.white12;
     final align = isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
 
@@ -31,7 +31,7 @@ class ChatBubble extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.attach_file, color: Colors.white),
+            Icon(Icons.audiotrack, color: Colors.white),
             SizedBox(width: 6),
             Flexible(
               child: Text(
@@ -41,6 +41,35 @@ class ChatBubble extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      );
+    } else if (message.type == MessageType.chart && message.chartData != null) {
+      final points = message.chartData!
+          .asMap()
+          .entries
+          .map((e) => FlSpot(e.key.toDouble(), e.value))
+          .toList();
+      contentWidget = SizedBox(
+        height: 150,
+        width: 250,
+        child: LineChart(
+          LineChartData(
+            gridData: FlGridData(show: false),
+            titlesData: FlTitlesData(show: false),
+            borderData: FlBorderData(show: false),
+            lineBarsData: [
+              LineChartBarData(
+                spots: points,
+                isCurved: true,
+                color: Colors.green,
+                dotData: FlDotData(show: false),
+                belowBarData: BarAreaData(
+                  show: true,
+                  color: Colors.green.withOpacity(0.3),
+                ),
+              )
+            ],
+          ),
         ),
       );
     } else {

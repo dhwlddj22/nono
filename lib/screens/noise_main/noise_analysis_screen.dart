@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,10 +30,33 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   @override
   void initState() {
     super.initState();
+    _fetchMessages();
     if (widget.initialInput != null && widget.initialInput!.trim().isNotEmpty) {
       _autoAnalyze(widget.initialInput!);
     }
   }
+
+  Future<void> _fetchMessages() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('chat_history')
+        .where('userId', isEqualTo: user.uid)
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    final messages = snapshot.docs.map((doc) {
+      final data = doc.data();
+      return Message.fromFirestore(data);
+    }).toList();
+
+    setState(() {
+      _messages.clear();
+      _messages.addAll(messages);
+    });
+  }
+
 
   Future<void> _autoAnalyze(String text) async {
     _addMessage(text, MessageType.user);
@@ -138,7 +162,47 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
               reverse: true,
               padding: EdgeInsets.only(top: 10),
               itemCount: _messages.length,
-              itemBuilder: (context, index) => ChatBubble(message: _messages[index]),
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                return Column(
+                  crossAxisAlignment: message.type == MessageType.user
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    ChatBubble(message: message),
+                    if (message.chartData != null)
+                      SizedBox(
+                        height: 160,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: LineChart(
+                            LineChartData(
+                              gridData: FlGridData(show: false),
+                              titlesData: FlTitlesData(show: false),
+                              borderData: FlBorderData(show: false),
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: message.chartData!
+                                      .asMap()
+                                      .entries
+                                      .map((e) => FlSpot(e.key.toDouble(), e.value))
+                                      .toList(),
+                                  isCurved: true,
+                                  color: Colors.green,
+                                  dotData: FlDotData(show: false),
+                                  belowBarData: BarAreaData(
+                                    show: true,
+                                    color: Colors.green.withOpacity(0.3),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ),
           if (_selectedFile != null)

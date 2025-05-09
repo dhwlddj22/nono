@@ -139,29 +139,6 @@ class _RecordScreenState extends State<RecordScreen> {
       chartData: _decibelValues,
     );
 
-// Save to Firestore
-    await FirebaseFirestore.instance.collection('chat_history').add({
-      'text': chartMessage.content,
-      'type': 'chart',
-    });
-    // 병렬 처리
-    await Future.wait([
-      uploadTask.whenComplete(() => null),
-      FirebaseFirestore.instance.collection('decibel_analysis').add({
-        'average_db': averageDb.toStringAsFixed(2),
-        'peak_db': peakDb.toStringAsFixed(2),
-        'timestamp': Timestamp.now(),
-      }),
-      FirebaseFirestore.instance.collection('chat_history').add({
-        'text': prompt,
-        'type': 'user',
-        'userId': FirebaseAuth.instance.currentUser?.uid,
-        'timestamp': Timestamp.now(),
-      }),
-    ]);
-
-    final downloadUrl = await ref.getDownloadURL();
-
     // 병렬 처리
     final response = await Future.wait([
       FirebaseFirestore.instance.collection('chat_history').add({

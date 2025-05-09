@@ -92,10 +92,3 @@
             weight: 600
           - asset: assets/fonts/Pretendard-Thin.ttf
             weight: 100
-
-  flutter_native_splash:
-    color: "#000000"
-    image: assets/logo.png
-    android: true
-    ios: true
-    fullscreen: true

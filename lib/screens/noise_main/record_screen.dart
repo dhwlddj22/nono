@@ -13,6 +13,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:lottie/lottie.dart';
 import 'NoiseAnalysisChatScreenWithNav.dart';
 import 'package:nono/screens/noise_main/chat_history_screen.dart';
+import 'message.dart';
 import 'noise_analysis_screen.dart';
 import 'my_page_screen.dart';
 import 'package:intl/intl.dart';
@@ -130,27 +131,31 @@ class _RecordScreenState extends State<RecordScreen> {
       'average_db': averageDb.toStringAsFixed(2),
       'peak_db': peakDb.toStringAsFixed(2),
       'timestamp': Timestamp.now(),
+      'decibel_values': _decibelValues, // 데시벨 데이터 저장
     });
+
 
     final prompt = NoisePromptBuilder.build(
       averageDb: averageDb,
       peakDb: peakDb,
     );
 
+    final chartMessage = Message(
+      content: '소음 분석 그래프',
+      type: MessageType.chart,
+      timestamp: DateTime.now(),
+      chartData: _decibelValues,
+    );
+
+// Save to Firestore
     await FirebaseFirestore.instance.collection('chat_history').add({
-      'text': prompt,
-      'type': 'user',
-      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'text': chartMessage.content,
+      'type': 'chart',
       'timestamp': Timestamp.now(),
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'chartData': _decibelValues,
     });
 
-    final reply = await OpenAIService.analyzeNoise(prompt);
-    await FirebaseFirestore.instance.collection('chat_history').add({
-      'text': reply ?? "AI 응답 실패",
-      'type': 'ai',
-      'userId': FirebaseAuth.instance.currentUser?.uid,
-      'timestamp': Timestamp.now(),
-    });
 
     Navigator.pop(context); // Close loading
     _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success

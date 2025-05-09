@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 65),
-            Image.asset('assets/logo.png', width: 135),
+            Image.asset('assets/logo2.png', width: 135),
             SizedBox(height: 40),
             _buildTextField('이메일', _emailController, false),
             SizedBox(height: 16),

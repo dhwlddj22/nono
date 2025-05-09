@@ -19,7 +19,7 @@ class CommunityScreen extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Image.asset('assets/logo.png', width: 95, height: 74),
+                Image.asset('assets/logo2.png', width: 95, height: 74),
                 SizedBox(height: 10),
                 Text(
                   "고민을 나누고 해결책을 찾아보세요.",

@@ -48,27 +48,21 @@ class _RecordScreenState extends State<RecordScreen> {
     await Permission.microphone.request();
   }
 
-  void _showLoadingDialog({
-    required bool isSuccess,
-    double width = 150,
-    double height = 150,
-  }) {
+  void _showLoadingDialog({required bool isSuccess, double width = 150, double height = 150}) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: Lottie.asset(
-              isSuccess ? 'assets/noise_main/success.json' : 'assets/noise_main/loading.json',
-              repeat: !isSuccess,
-            ),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Lottie.asset(
+            isSuccess ? 'assets/noise_main/success.json' : 'assets/noise_main/loading.json',
+            repeat: !isSuccess,
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -98,6 +92,8 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
+    _stopwatch.stop();
+    _timer.cancel();
     _showLoadingDialog(isSuccess: false, width: 120, height: 120);
 
     await _recorder.stopRecorder();
@@ -105,27 +101,14 @@ class _RecordScreenState extends State<RecordScreen> {
 
     final file = File(_recordFilePath!);
     final fileName = _recordFilePath!.split('/').last;
+    final ref = FirebaseStorage.instance.ref('uploads/$fileName');
+    final uploadTask = ref.putFile(file);
 
-    // 🔼 Firebase Storage 업로드
-    final ref = FirebaseStorage.instance
-        .ref('uploads/${DateTime.now().millisecondsSinceEpoch}_$fileName');
-    await ref.putFile(file);
-    final downloadUrl = await ref.getDownloadURL();
-
-    // 🔽 Firestore 파일 메시지 저장
-    await FirebaseFirestore.instance.collection('chat_history').add({
-      'text': fileName,
-      'type': 'audio',
-      'url': downloadUrl,
-      'userId': FirebaseAuth.instance.currentUser?.uid,
-      'timestamp': Timestamp.now(),
-    });
-
-    // 📊 평균 및 최고 데시벨 계산
     final averageDb = _calculateAverage();
     final peakDb = _decibelValues.isNotEmpty
         ? _decibelValues.reduce((a, b) => a > b ? a : b)
         : averageDb;
+
 
     await FirebaseFirestore.instance.collection('decibel_analysis').add({
       'average_db': averageDb.toStringAsFixed(2),
@@ -140,6 +123,7 @@ class _RecordScreenState extends State<RecordScreen> {
       peakDb: peakDb,
     );
 
+
     final chartMessage = Message(
       content: '소음 분석 그래프',
       type: MessageType.chart,
@@ -151,6 +135,43 @@ class _RecordScreenState extends State<RecordScreen> {
     await FirebaseFirestore.instance.collection('chat_history').add({
       'text': chartMessage.content,
       'type': 'chart',
+
+    // 병렬 처리
+    await Future.wait([
+      uploadTask.whenComplete(() => null),
+      FirebaseFirestore.instance.collection('decibel_analysis').add({
+        'average_db': averageDb.toStringAsFixed(2),
+        'peak_db': peakDb.toStringAsFixed(2),
+        'timestamp': Timestamp.now(),
+      }),
+      FirebaseFirestore.instance.collection('chat_history').add({
+        'text': prompt,
+        'type': 'user',
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'timestamp': Timestamp.now(),
+      }),
+    ]);
+
+    final downloadUrl = await ref.getDownloadURL();
+
+    // 병렬 처리
+    final response = await Future.wait([
+      FirebaseFirestore.instance.collection('chat_history').add({
+        'text': fileName,
+        'type': 'audio',
+        'url': downloadUrl,
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'timestamp': Timestamp.now(),
+      }),
+      OpenAIService.analyzeNoise(prompt),
+    ]);
+
+    final aiReply = response[1] as String? ?? "AI 응답 실패";
+
+    await FirebaseFirestore.instance.collection('chat_history').add({
+      'text': aiReply,
+      'type': 'ai',
+      'userId': FirebaseAuth.instance.currentUser?.uid,
       'timestamp': Timestamp.now(),
       'userId': FirebaseAuth.instance.currentUser?.uid,
       'chartData': _decibelValues,
@@ -169,6 +190,15 @@ class _RecordScreenState extends State<RecordScreen> {
         builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
       ),
     );
+
+    if (mounted) {
+      Navigator.pop(context); // 로딩 애니메이션 닫기
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt)),
+      );
+    }
+
 
     setState(() {
       _isRecording = false;
@@ -189,7 +219,7 @@ class _RecordScreenState extends State<RecordScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('녹음이 취소되었습니다.')),
+      const SnackBar(content: Text('녹음이 취소되었습니다.')),
     );
   }
 
@@ -242,12 +272,7 @@ class _RecordScreenState extends State<RecordScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('NO!SE GUARD'),
-        titleTextStyle: TextStyle(
-          color: const Color(0xFF58B721),
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
+        title: const Text('NO!SE GUARD', style: TextStyle(color: Color(0xFF58B721), fontWeight: FontWeight.bold, fontSize: 20)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.chat, color: Colors.white),
@@ -270,7 +295,7 @@ class _RecordScreenState extends State<RecordScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 60),
-          Image.asset('assets/logo.png', width: 105, height: 104),
+          Image.asset('assets/logo2.png', width: 105, height: 104),
           const SizedBox(height: 10),
           const Text("스마트한 층간소음 해결", style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.w900)),
           const Text("NO!SE GUARD", style: TextStyle(fontSize: 30, color: Color(0xFF57CC1C), fontWeight: FontWeight.bold)),
@@ -293,14 +318,14 @@ class _RecordScreenState extends State<RecordScreen> {
         const Text("새로운 녹음 제목", style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
         Text(
-          "${DateTime.now().year}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().day.toString().padLeft(2, '0')}",
+          DateFormat('yyyy/MM/dd').format(DateTime.now()),
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 50),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("평균 데시벨 ", style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+            const Text("평균 데시벨 ", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
             Text("${_calculateAverage().toStringAsFixed(2)} dB", style: const TextStyle(color: Color(0xFF57CC1C), fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),

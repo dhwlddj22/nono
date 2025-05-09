@@ -13,7 +13,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:lottie/lottie.dart';
 import 'NoiseAnalysisChatScreenWithNav.dart';
 import 'package:nono/screens/noise_main/chat_history_screen.dart';
-import 'message.dart';
 import 'noise_analysis_screen.dart';
 import 'my_page_screen.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +20,8 @@ import 'package:nono/screens/noise_main/noise_prompt_builder.dart';
 import 'openai_service.dart';
 
 class RecordScreen extends StatefulWidget {
+  const RecordScreen({super.key});
+
   @override
   _RecordScreenState createState() => _RecordScreenState();
 }
@@ -30,9 +31,9 @@ class _RecordScreenState extends State<RecordScreen> {
   late FlutterSoundRecorder _recorder;
   late NoiseMeter _noiseMeter;
   StreamSubscription<NoiseReading>? _noiseSubscription;
-  List<double> _decibelValues = [];
+  final List<double> _decibelValues = [];
   String? _recordFilePath;
-  Stopwatch _stopwatch = Stopwatch();
+  final Stopwatch _stopwatch = Stopwatch();
   late Timer _timer;
 
   @override
@@ -98,6 +99,10 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
+    _stopwatch.stop();
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
     _showLoadingDialog(isSuccess: false, width: 120, height: 120);
 
     await _recorder.stopRecorder();
@@ -112,15 +117,6 @@ class _RecordScreenState extends State<RecordScreen> {
     await ref.putFile(file);
     final downloadUrl = await ref.getDownloadURL();
 
-    // 🔽 Firestore 파일 메시지 저장
-    await FirebaseFirestore.instance.collection('chat_history').add({
-      'text': fileName,
-      'type': 'audio',
-      'url': downloadUrl,
-      'userId': FirebaseAuth.instance.currentUser?.uid,
-      'timestamp': Timestamp.now(),
-    });
-
     // 📊 평균 및 최고 데시벨 계산
     final averageDb = _calculateAverage();
     final peakDb = _decibelValues.isNotEmpty
@@ -132,12 +128,12 @@ class _RecordScreenState extends State<RecordScreen> {
       peakDb: peakDb,
     );
 
-    final chartMessage = Message(
-      content: '소음 분석 그래프',
-      type: MessageType.chart,
-      timestamp: DateTime.now(),
-      chartData: _decibelValues,
-    );
+    await FirebaseFirestore.instance.collection('decibel_analysis').add({
+      'average_db': averageDb.toStringAsFixed(2),
+      'peak_db': peakDb.toStringAsFixed(2),
+      'timestamp': Timestamp.now(),
+      'decibel_values': _decibelValues, // 데시벨 데이터 저장
+    });
 
     // 병렬 처리
     final response = await Future.wait([
@@ -179,6 +175,7 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() {
       _isRecording = false;
       _decibelValues.clear();
+      _recordFilePath = null;
     });
   }
 
@@ -195,7 +192,7 @@ class _RecordScreenState extends State<RecordScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('녹음이 취소되었습니다.')),
+      const SnackBar(content: Text('녹음이 취소되었습니다.')),
     );
   }
 
@@ -211,15 +208,15 @@ class _RecordScreenState extends State<RecordScreen> {
 
     return LineChart(
       LineChartData(
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(show: false),
+        gridData: const FlGridData(show: false),
+        titlesData: const FlTitlesData(show: false),
         borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
             spots: points,
             isCurved: true,
             color: Colors.green,
-            dotData: FlDotData(show: false),
+            dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
               color: Colors.green.withOpacity(0.3),
@@ -250,9 +247,9 @@ class _RecordScreenState extends State<RecordScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('NO!SE GUARD'),
-        titleTextStyle: TextStyle(
-          color: const Color(0xFF58B721),
+        title: const Text('NO!SE GUARD'),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF58B721),
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
@@ -308,7 +305,7 @@ class _RecordScreenState extends State<RecordScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("평균 데시벨 ", style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+            const Text("평균 데시벨 ", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
             Text("${_calculateAverage().toStringAsFixed(2)} dB", style: const TextStyle(color: Color(0xFF57CC1C), fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),

@@ -127,14 +127,6 @@ class _RecordScreenState extends State<RecordScreen> {
         ? _decibelValues.reduce((a, b) => a > b ? a : b)
         : averageDb;
 
-    await FirebaseFirestore.instance.collection('decibel_analysis').add({
-      'average_db': averageDb.toStringAsFixed(2),
-      'peak_db': peakDb.toStringAsFixed(2),
-      'timestamp': Timestamp.now(),
-      'decibel_values': _decibelValues, // 데시벨 데이터 저장
-    });
-
-
     final prompt = NoisePromptBuilder.build(
       averageDb: averageDb,
       peakDb: peakDb,
@@ -151,24 +143,62 @@ class _RecordScreenState extends State<RecordScreen> {
     await FirebaseFirestore.instance.collection('chat_history').add({
       'text': chartMessage.content,
       'type': 'chart',
-      'timestamp': Timestamp.now(),
+    });
+    // 병렬 처리
+    await Future.wait([
+      uploadTask.whenComplete(() => null),
+      FirebaseFirestore.instance.collection('decibel_analysis').add({
+        'average_db': averageDb.toStringAsFixed(2),
+        'peak_db': peakDb.toStringAsFixed(2),
+        'timestamp': Timestamp.now(),
+      }),
+      FirebaseFirestore.instance.collection('chat_history').add({
+        'text': prompt,
+        'type': 'user',
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'timestamp': Timestamp.now(),
+      }),
+    ]);
+
+    final downloadUrl = await ref.getDownloadURL();
+
+    // 병렬 처리
+    final response = await Future.wait([
+      FirebaseFirestore.instance.collection('chat_history').add({
+        'text': fileName,
+        'type': 'audio',
+        'url': downloadUrl,
+        'userId': FirebaseAuth.instance.currentUser?.uid,
+        'timestamp': Timestamp.now(),
+      }),
+      OpenAIService.analyzeNoise(prompt),
+    ]);
+
+    final aiReply = response[1] as String? ?? "AI 응답 실패";
+
+    await FirebaseFirestore.instance.collection('chat_history').add({
+      'text': aiReply,
+      'type': 'ai',
       'userId': FirebaseAuth.instance.currentUser?.uid,
+      'timestamp': Timestamp.now(),
       'chartData': _decibelValues,
     });
 
     Navigator.pop(context); // Close loading
-    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success
 
+    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Show success animation
     await Future.delayed(const Duration(seconds: 3));
-    Navigator.pop(context); // Close success
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
-      ),
-    );
 
+    if (mounted) {
+      Navigator.pop(context); // Close success animation
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
+        ),
+      );
+    }
     setState(() {
       _isRecording = false;
       _decibelValues.clear();
@@ -231,7 +261,9 @@ class _RecordScreenState extends State<RecordScreen> {
   void dispose() {
     _recorder.closeRecorder();
     _noiseSubscription?.cancel();
-    if (_timer.isActive) _timer.cancel();
+    if (mounted && _timer.isActive) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 

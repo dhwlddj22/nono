@@ -109,14 +109,14 @@ class _RecordScreenState extends State<RecordScreen> {
         ? _decibelValues.reduce((a, b) => a > b ? a : b)
         : averageDb;
 
-
+/*
     await FirebaseFirestore.instance.collection('decibel_analysis').add({
       'average_db': averageDb.toStringAsFixed(2),
       'peak_db': peakDb.toStringAsFixed(2),
       'timestamp': Timestamp.now(),
       'decibel_values': _decibelValues, // 데시벨 데이터 저장
     });
-
+*/
 
     final prompt = NoisePromptBuilder.build(
       averageDb: averageDb,
@@ -135,7 +135,7 @@ class _RecordScreenState extends State<RecordScreen> {
     await FirebaseFirestore.instance.collection('chat_history').add({
       'text': chartMessage.content,
       'type': 'chart',
-
+    });
     // 병렬 처리
     await Future.wait([
       uploadTask.whenComplete(() => null),
@@ -173,29 +173,22 @@ class _RecordScreenState extends State<RecordScreen> {
       'type': 'ai',
       'userId': FirebaseAuth.instance.currentUser?.uid,
       'timestamp': Timestamp.now(),
-      'userId': FirebaseAuth.instance.currentUser?.uid,
       'chartData': _decibelValues,
     });
 
 
     Navigator.pop(context); // Close loading
-    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Success
 
+    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Show success animation
     await Future.delayed(const Duration(seconds: 3));
-    Navigator.pop(context); // Close success
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
-      ),
-    );
 
     if (mounted) {
-      Navigator.pop(context); // 로딩 애니메이션 닫기
+      Navigator.pop(context); // Close success animation
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt)),
+        MaterialPageRoute(
+          builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
+        ),
       );
     }
 
@@ -262,7 +255,9 @@ class _RecordScreenState extends State<RecordScreen> {
   void dispose() {
     _recorder.closeRecorder();
     _noiseSubscription?.cancel();
-    if (_timer.isActive) _timer.cancel();
+    if (mounted && _timer.isActive) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 

@@ -199,7 +199,6 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
                   children: [
                     ChatBubble(message: message),
 
-
                   ],
                 );
               },

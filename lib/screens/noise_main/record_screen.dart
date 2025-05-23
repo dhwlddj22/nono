@@ -159,6 +159,13 @@ class RecordScreenState extends State<RecordScreen> {
 
     final aiReply = response[1] as String? ?? "AI 응답 실패";
 
+    final chartMessage = Message(
+      content: '소음 분석 그래프',
+      type: MessageType.chart,
+      timestamp: DateTime.now(),
+      chartData: _decibelValues,
+    );
+
     await FirebaseFirestore.instance.collection('chat_history').add({
       'text': chartMessage.content,
       'type': 'chart', // 정확히

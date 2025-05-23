@@ -198,37 +198,6 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
                       : CrossAxisAlignment.start,
                   children: [
                     ChatBubble(message: message),
-                    
-                    if (message.chartData != null)
-                      SizedBox(
-                        height: 160,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: LineChart(
-                            LineChartData(
-                              gridData: const FlGridData(show: false),
-                              titlesData: const FlTitlesData(show: false),
-                              borderData: FlBorderData(show: false),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: message.chartData!
-                                      .asMap()
-                                      .entries
-                                      .map((e) => FlSpot(e.key.toDouble(), e.value))
-                                      .toList(),
-                                  isCurved: true,
-                                  color: Colors.green,
-                                  dotData: const FlDotData(show: false),
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    color: Colors.green.withOpacity(0.3),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 );
               },

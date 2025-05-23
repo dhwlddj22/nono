@@ -47,106 +47,106 @@ class ChatHistoryScreen extends StatelessWidget {
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () {
-            if(viewMode == ViewMode.history) {
-              onExit(); // viewMode 변경
-            } else {
-              Navigator.pop(context);
-            }
-          }
+        appBar: AppBar(
+            leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () {
+                  if(viewMode == ViewMode.history) {
+                    onExit(); // viewMode 변경
+                  } else {
+                    Navigator.pop(context);
+                  }
+                }
+            ),
+            title: const Text("채팅 기록"),
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(1.0),
+              child: Divider(
+                height: 1,
+                thickness: 1,
+                indent: 16,     // 왼쪽 여백
+                endIndent: 16,  // 오른쪽 여백
+                color: Color(0xFF58B721),
+              ),
+            ),
+            backgroundColor: Colors.black
         ),
-        title: const Text("채팅 기록"),
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(
-            height: 1,
-            thickness: 1,
-            indent: 16,     // 왼쪽 여백
-            endIndent: 16,  // 오른쪽 여백
-            color: Color(0xFF58B721),
-          ),
-        ),
-        backgroundColor: Colors.black
-      ),
-      backgroundColor: Colors.black,
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-          .collection('chat_history')
-          .where('userId', isEqualTo: currentUser.uid)
-          .where('type', isEqualTo: 'ai') // AI 응답만 필터링
-          .where('timestamp', isGreaterThanOrEqualTo: startOfDay)
-          .where('timestamp', isLessThan: endOfDay)
-          .orderBy('timestamp', descending: true)
-          .limit(30)
-          .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        backgroundColor: Colors.black,
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('chat_history')
+                .where('userId', isEqualTo: currentUser.uid)
+                .where('type', isEqualTo: 'ai') // AI 응답만 필터링
+                .where('timestamp', isGreaterThanOrEqualTo: startOfDay)
+                .where('timestamp', isLessThan: endOfDay)
+                .orderBy('timestamp', descending: true)
+                .limit(30)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
-          final grouped = <String, List<DocumentSnapshot>>{};
+              final grouped = <String, List<DocumentSnapshot>>{};
 
-          // 그룹화 과정
-          for (var doc in snapshot.data!.docs) {
-            final data = doc.data() as Map<String, dynamic>;
-            if (data['type'] == 'ai') {
-              final timestamp = data['timestamp'] as Timestamp;
-              final date = DateFormat('yy/MM/dd').format(timestamp.toDate());
-              grouped.putIfAbsent(date, () => []).add(doc);
-            }
-          }
+              // 그룹화 과정
+              for (var doc in snapshot.data!.docs) {
+                final data = doc.data() as Map<String, dynamic>;
+                if (data['type'] == 'ai') {
+                  final timestamp = data['timestamp'] as Timestamp;
+                  final date = DateFormat('yy/MM/dd').format(timestamp.toDate());
+                  grouped.putIfAbsent(date, () => []).add(doc);
+                }
+              }
 
-          // UI용으로 모든 그룹을 병합하고 시간순 정렬
-          final flatList = grouped.values.expand((list) => list).toList()
-            ..sort((a, b) {
-              final t1 = (a.data() as Map)['timestamp'] as Timestamp;
-              final t2 = (b.data() as Map)['timestamp'] as Timestamp;
-              return t1.compareTo(t2);
-            });
+              // UI용으로 모든 그룹을 병합하고 시간순 정렬
+              final flatList = grouped.values.expand((list) => list).toList()
+                ..sort((a, b) {
+                  final t1 = (a.data() as Map)['timestamp'] as Timestamp;
+                  final t2 = (b.data() as Map)['timestamp'] as Timestamp;
+                  return t1.compareTo(t2);
+                });
 
-          return ListView.builder(
-            itemCount: flatList.length,
-            itemBuilder: (context, index) {
-              final doc = flatList[index];
-              final data = doc.data() as Map<String, dynamic>;
-              final text = data['text'];
-              final timestamp = (data['timestamp'] as Timestamp).toDate();
-              final formattedDate = DateFormat('yy/MM/dd').format(timestamp);
+              return ListView.builder(
+                itemCount: flatList.length,
+                itemBuilder: (context, index) {
+                  final doc = flatList[index];
+                  final data = doc.data() as Map<String, dynamic>;
+                  final text = data['text'];
+                  final timestamp = (data['timestamp'] as Timestamp).toDate();
+                  final formattedDate = DateFormat('yy/MM/dd').format(timestamp);
 
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      text,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    subtitle: Text(
-                      formattedDate,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                    onTap: () {
-                      final recordState = context.findAncestorStateOfType<RecordScreenState>();
-                      if (recordState != null) {
-                        recordState.setState(() {
-                          viewMode = ViewMode.detail;
-                          recordState.selectedFormattedDate = formattedDate;
-                        });
-                      }
-                    },
-                  ),
-                  const Divider(color: Colors.grey, indent: 16, endIndent: 16),
-                ],
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          text,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          formattedDate,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        onTap: () {
+                          final recordState = context.findAncestorStateOfType<RecordScreenState>();
+                          if (recordState != null) {
+                            recordState.setState(() {
+                              viewMode = ViewMode.detail;
+                              recordState.selectedFormattedDate = formattedDate;
+                            });
+                          }
+                        },
+                      ),
+                      const Divider(color: Colors.grey, indent: 16, endIndent: 16),
+                    ],
+                  );
+                },
               );
-            },
-          );
-        }
-      )
+            }
+        )
     );
   }
 }

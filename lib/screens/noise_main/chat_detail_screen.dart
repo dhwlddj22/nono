@@ -174,11 +174,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   itemCount: docs.length,
                   itemBuilder: (context, index) {
                     final doc = docs[index];
+                    final data = doc.data() as Map<String, dynamic>;
+
                     final msg = Message(
-                      content: doc['text'],
-                      type: MessageType.values.firstWhere((e) => e.toString().split('.').last == doc['type']),
-                      timestamp: (doc['timestamp'] as Timestamp).toDate(),
+                      content: data['text'],
+                      type: MessageType.values.firstWhere((e) => e.toString().split('.').last == data['type']),
+                      timestamp: (data['timestamp'] as Timestamp).toDate(),
+                      url: data['url'],
+                      chartData: data['chartData'] != null
+                          ? List<double>.from((data['chartData'] as List).map((e) => (e as num).toDouble()))
+                          : null,
                     );
+
 
                     return ChatBubble(message: msg);
                   },

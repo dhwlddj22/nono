@@ -4,6 +4,8 @@ import 'package:nono/screens/login/sign_up_screen.dart';
 import '../main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -21,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -40,34 +42,34 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.start, // 위치 수정
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 65),
+            const SizedBox(height: 45),
             Image.asset('assets/logo2.png', width: 135),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             _buildTextField('이메일', _emailController, false),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField('비밀번호', _passwordController, true),
-            SizedBox(height: 21),
+            const SizedBox(height: 21),
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF58B721),
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('로그인', style: TextStyle(color: Colors.white, fontSize: 18)),
+              child: const Text('로그인', style: TextStyle(color: Colors.white, fontSize: 18)),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('계정이 없으신가요?', style: TextStyle(color: Colors.white)),
+                const Text('계정이 없으신가요?', style: TextStyle(color: Colors.white)),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen()));
                   },
-                  child: Text('회원가입하기', style: TextStyle(color: const Color(0xFF58B721))),
+                  child: const Text('회원가입하기', style: TextStyle(color: Color(0xFF58B721))),
                 ),
               ],
             ),
@@ -81,21 +83,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextField(
       controller: controller,
       obscureText: isPassword ? _obscureText : false,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-            color: const Color(0xFF58B721)
+        labelStyle: const TextStyle(
+            color: Color(0xFF58B721)
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-              color: const Color(0xFF58B721)
+          borderSide: const BorderSide(
+              color: Color(0xFF58B721)
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: const Color(0xFF58B721)
+          borderSide: const BorderSide(color: Color(0xFF58B721)
           ),
         ),
         suffixIcon: isPassword

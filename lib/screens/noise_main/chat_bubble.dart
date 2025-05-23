@@ -6,12 +6,12 @@ import 'message.dart';
 class ChatBubble extends StatelessWidget {
   final Message message;
 
-  const ChatBubble({required this.message});
+  const ChatBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.type == MessageType.user || message.type == MessageType.audio;
-    final bubbleColor = isUser ? Colors.green : Colors.white12;
+    final bubbleColor = isUser ? const Color(0xFF58B721) : Colors.white24;
     final align = isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
 
     Widget contentWidget;
@@ -24,19 +24,19 @@ class ChatBubble extends StatelessWidget {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("파일을 열 수 없습니다.")),
+              const SnackBar(content: Text("파일을 열 수 없습니다.")),
             );
           }
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.audiotrack, color: Colors.white),
-            SizedBox(width: 6),
+            const Icon(Icons.audiotrack, color: Colors.white),
+            const SizedBox(width: 6),
             Flexible(
               child: Text(
                 message.content,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -55,8 +55,8 @@ class ChatBubble extends StatelessWidget {
         width: 250,
         child: LineChart(
           LineChartData(
-            gridData: FlGridData(show: false),
-            titlesData: FlTitlesData(show: false),
+            gridData: const FlGridData(show: false),
+            titlesData: const FlTitlesData(show: false),
             borderData: FlBorderData(show: false),
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
@@ -75,8 +75,8 @@ class ChatBubble extends StatelessWidget {
               LineChartBarData(
                 spots: points,
                 isCurved: true,
-                color: Colors.green,
-                dotData: FlDotData(show: false),
+                color: const Color(0xFF58B721),
+                dotData: const FlDotData(show: false),
                 belowBarData: BarAreaData(
                   show: true,
                   color: Colors.green.withOpacity(0.3),
@@ -99,18 +99,18 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment: align,
         children: [
           Container(
-            padding: EdgeInsets.all(12),
-            constraints: BoxConstraints(maxWidth: 280),
+            padding: const EdgeInsets.all(12),
+            constraints: const BoxConstraints(maxWidth: 280),
             decoration: BoxDecoration(
               color: bubbleColor,
               borderRadius: BorderRadius.circular(15),
             ),
             child: contentWidget,
           ),
-          SizedBox(height: 2),
+          const SizedBox(height: 2),
           Text(
             _formatTime(message.timestamp),
-            style: TextStyle(color: Colors.grey, fontSize: 10),
+            style: const TextStyle(color: Colors.grey, fontSize: 10),
           ),
         ],
       ),

@@ -16,10 +16,12 @@ void main() async {
     androidProvider: AndroidProvider.debug
   );
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -43,9 +45,9 @@ class MyApp extends StatelessWidget {
               );
             }
             if (snapshot.hasData) {
-              return MainScreen();
+              return const MainScreen();
             }
-            return LoginScreen();
+            return const LoginScreen();
           },
         ),
       ),

@@ -15,7 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class NoiseAnalysisChatScreen extends StatefulWidget {
   final String? initialInput;
 
-  NoiseAnalysisChatScreen({this.initialInput});
+  const NoiseAnalysisChatScreen({super.key, this.initialInput});
 
   @override
   _NoiseAnalysisChatScreenState createState() => _NoiseAnalysisChatScreenState();
@@ -142,7 +142,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       } catch (e) {
         print('파일 업로드 실패: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('파일 업로드에 실패했습니다.')),
+          const SnackBar(content: Text('파일 업로드에 실패했습니다.')),
         );
       }
     }
@@ -155,24 +155,29 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("NO!SE GUARD"),
+        title: const Text("NO!SE GUARD"),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.chat),
+          icon: const Icon(Icons.chat),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ChatHistoryScreen()),
+              MaterialPageRoute(
+                  builder: (context) => ChatHistoryScreen(
+                    selectedDate: '',
+                    onExit: () {},
+                  )
+              ),
             );
           },
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.white),
+            icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyPageScreen()),
+                MaterialPageRoute(builder: (context) => const MyPageScreen()),
               );
             },
           ),
@@ -183,7 +188,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
           Expanded(
             child: ListView.builder(
               reverse: true,
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
@@ -193,36 +198,37 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
                       : CrossAxisAlignment.start,
                   children: [
                     ChatBubble(message: message),
-                    // if (message.chartData != null)
-                    //   SizedBox(
-                    //     height: 160,
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.symmetric(horizontal: 12),
-                    //       child: LineChart(
-                    //         LineChartData(
-                    //           gridData: FlGridData(show: false),
-                    //           titlesData: FlTitlesData(show: false),
-                    //           borderData: FlBorderData(show: false),
-                    //           lineBarsData: [
-                    //             LineChartBarData(
-                    //               spots: message.chartData!
-                    //                   .asMap()
-                    //                   .entries
-                    //                   .map((e) => FlSpot(e.key.toDouble(), e.value))
-                    //                   .toList(),
-                    //               isCurved: true,
-                    //               color: Colors.green,
-                    //               dotData: FlDotData(show: false),
-                    //               belowBarData: BarAreaData(
-                    //                 show: true,
-                    //                 color: Colors.green.withOpacity(0.3),
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
+                    
+                    if (message.chartData != null)
+                      SizedBox(
+                        height: 160,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: LineChart(
+                            LineChartData(
+                              gridData: const FlGridData(show: false),
+                              titlesData: const FlTitlesData(show: false),
+                              borderData: FlBorderData(show: false),
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: message.chartData!
+                                      .asMap()
+                                      .entries
+                                      .map((e) => FlSpot(e.key.toDouble(), e.value))
+                                      .toList(),
+                                  isCurved: true,
+                                  color: Colors.green,
+                                  dotData: const FlDotData(show: false),
+                                  belowBarData: BarAreaData(
+                                    show: true,
+                                    color: Colors.green.withOpacity(0.3),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 );
               },
@@ -230,15 +236,15 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
           ),
           if (_selectedFile != null)
             Container(
-              margin: EdgeInsets.only(left: 16, bottom: 6),
+              margin: const EdgeInsets.only(left: 16, bottom: 6),
               alignment: Alignment.centerLeft,
               child: Row(
                 children: [
-                  Icon(Icons.attach_file, color: Colors.green),
-                  SizedBox(width: 6),
+                  const Icon(Icons.attach_file, color: Colors.green),
+                  const SizedBox(width: 6),
                   Text(
                     _selectedFile!.path.split('/').last,
-                    style: TextStyle(color: Colors.green),
+                    style: const TextStyle(color: Colors.green),
                   ),
                 ],
               ),
@@ -252,37 +258,37 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   Widget _buildInputArea() {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(10, 6, 10, 10),
+        padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
         child: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.attach_file, color: Colors.white),
+              icon: const Icon(Icons.attach_file, color: Colors.white),
               onPressed: _pickFile,
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: TextField(
                   controller: _controller,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: "원하는 분석 내용을 입력해보세요.",
                     border: InputBorder.none,
                   ),
                 ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             _isLoading
-                ? SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
                 : FloatingActionButton(
               onPressed: _sendMessage,
               backgroundColor: Colors.white,
-              child: Icon(Icons.arrow_forward, color: Colors.black),
               mini: true,
+              child: const Icon(Icons.arrow_forward, color: Colors.black),
             ),
           ],
         ),

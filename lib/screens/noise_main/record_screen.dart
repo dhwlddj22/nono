@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:nono/screens/noise_main/chat_history_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -12,21 +13,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:lottie/lottie.dart';
 import 'NoiseAnalysisChatScreenWithNav.dart';
-import 'package:nono/screens/noise_main/chat_history_screen.dart';
-import 'noise_analysis_screen.dart';
-import 'my_page_screen.dart';
 import 'package:intl/intl.dart';
-import 'package:nono/screens/noise_main/noise_prompt_builder.dart';
+import 'chat_detail_screen.dart';
+import 'chat_history_screen.dart';
+import 'message.dart';
+import 'my_page_screen.dart';
+import 'noise_analysis_screen.dart';
+import 'noise_prompt_builder.dart';
 import 'openai_service.dart';
+
+enum ViewMode { idle, history, detail }
+
+ViewMode viewMode = ViewMode.idle;
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({super.key});
 
   @override
-  _RecordScreenState createState() => _RecordScreenState();
+  RecordScreenState createState() => RecordScreenState();
 }
 
-class _RecordScreenState extends State<RecordScreen> {
+class RecordScreenState extends State<RecordScreen> {
   bool _isRecording = false;
   late FlutterSoundRecorder _recorder;
   late NoiseMeter _noiseMeter;
@@ -35,6 +42,7 @@ class _RecordScreenState extends State<RecordScreen> {
   String? _recordFilePath;
   final Stopwatch _stopwatch = Stopwatch();
   late Timer _timer;
+  String? selectedFormattedDate; // 채팅 기록 날짜 (상태변수)
 
   @override
   void initState() {
@@ -42,6 +50,7 @@ class _RecordScreenState extends State<RecordScreen> {
     _recorder = FlutterSoundRecorder();
     _noiseMeter = NoiseMeter();
     _init();
+    fetchChatHistory();
   }
 
   Future<void> _init() async {
@@ -216,7 +225,7 @@ class _RecordScreenState extends State<RecordScreen> {
           LineChartBarData(
             spots: points,
             isCurved: true,
-            color: Colors.green,
+            color: const Color(0xFF58B721),
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
@@ -241,7 +250,26 @@ class _RecordScreenState extends State<RecordScreen> {
     }
     super.dispose();
   }
+//---------------------------------유저 채팅 기록 불러오기 시작---------------------------------
+  List<Message> chatHistory = [];
+  Future<void> fetchChatHistory() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
+    final snapshot = await FirebaseFirestore.instance
+        .collection('chat_history')
+        .where('userId', isEqualTo: user.uid)
+        .orderBy('timestamp', descending: true)
+        .limit(50)
+        .get();
+
+    setState(() {
+      chatHistory = snapshot.docs.map((doc) => Message.fromFirestore(doc.data()))
+          .where((msg) => msg.type == MessageType.user) // 사용자 메시지만 필터링
+          .toList();
+    });
+  }
+//---------------------------------유저 채팅 기록 불러오기 끝---------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,18 +283,116 @@ class _RecordScreenState extends State<RecordScreen> {
           fontSize: 20,
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.chat, color: Colors.white),
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChatHistoryScreen())),
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.chat, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer(); // ← 햄버거 누르면 drawer 열기
+            },
+          ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MyPageScreen())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyPageScreen())),
           ),
         ],
       ),
-      body: _isRecording ? _buildRecordingView() : _buildIdleView(),
+      //---------------------------------채팅 기록 UI 시작---------------------------------
+      drawer: Padding(
+        padding: EdgeInsets.only(
+          top: kToolbarHeight + MediaQuery.of(context).padding.top,
+        ),
+        child: Drawer(
+          backgroundColor: Colors.grey[900],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              // 🔒 고정된 제목
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  '채팅',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  '대화내역',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // 📜 아래는 스크롤 가능
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: chatHistory.length,
+                  itemBuilder: (context, index) {
+                    final message = chatHistory[index];
+                    return Column(
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title:
+                            Text(
+                              message.content,
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: Text(
+                              DateFormat('yyyy.MM.dd HH:mm').format(message.timestamp),
+                              style: const TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          onTap: () {
+                            final message = chatHistory[index];
+                            final formattedDate = DateFormat('yy/MM/dd').format(message.timestamp);
+
+                            Navigator.pop(context);
+                            setState(() {
+                              selectedFormattedDate = formattedDate;
+                              viewMode = ViewMode.history;
+                            });
+                          },
+                        ),
+                        const Divider(color: Colors.grey),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      //---------------------------------채팅 기록 UI 끝---------------------------------
+      body: _isRecording
+          ? _buildRecordingView()
+          : viewMode == ViewMode.history
+          ? ChatHistoryScreen(
+        selectedDate: selectedFormattedDate,
+        onExit: () {
+          setState(() {
+            viewMode = ViewMode.idle;
+          });
+        },
+      )
+          : viewMode == ViewMode.detail && selectedFormattedDate != null
+          ? ChatDetailScreen(dateKey: selectedFormattedDate!)
+          : _buildIdleView(),
     );
   }
 
@@ -322,7 +448,7 @@ class _RecordScreenState extends State<RecordScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NoiseAnalysisChatScreen())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NoiseAnalysisChatScreen())),
               child: SvgPicture.asset('assets/noise_main/chat.svg', width: 38, height: 38),
             ),
             const SizedBox(width: 20),

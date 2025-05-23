@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main_screen.dart';
 import 'noise_analysis_screen.dart';
@@ -7,7 +7,7 @@ import 'noise_analysis_screen.dart';
 class NoiseAnalysisChatScreenWithNav extends StatelessWidget {
   final String? initialInput;
 
-  NoiseAnalysisChatScreenWithNav({this.initialInput});
+  const NoiseAnalysisChatScreenWithNav({super.key, this.initialInput});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class NoiseAnalysisChatScreenWithNav extends StatelessWidget {
               ),
             );
           },
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.lightbulb_outline), label: "원터치 신고"),
             BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: "소음게시판"),
             BottomNavigationBarItem(icon: Icon(Icons.adb), label: "AI소음측정"),

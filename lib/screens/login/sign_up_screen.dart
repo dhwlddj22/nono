@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'welcome_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -30,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // ✅ 회원가입 성공 시 WelcomeScreen으로 이동
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => WelcomeScreen()),
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,7 +49,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -57,23 +59,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
           mainAxisAlignment: MainAxisAlignment.start, // 위치 수정
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField('이름', _nameController, false),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField('이메일', _emailController, false),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildTextField('비밀번호', _passwordController, true),
-            SizedBox(height: 25),
+            const SizedBox(height: 25),
             ElevatedButton(
               onPressed: _signUp,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF58B721),
-                minimumSize: Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('가입하기', style: TextStyle(color: Colors.white, fontSize: 18)),
+              child: const Text('가입하기', style: TextStyle(color: Colors.white, fontSize: 18)),
             ),
           ],
         ),
@@ -85,22 +87,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return TextField(
       controller: controller,
       obscureText: isPassword ? _obscureText : false,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-            color: const Color(0xFF58B721)
+        labelStyle: const TextStyle(
+            color: Color(0xFF58B721)
         ),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-                color: const Color(0xFF58B721)
+            borderSide: const BorderSide(
+                color: Color(0xFF58B721)
             )
         ),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-                color: const Color(0xFF58B721)
+            borderSide: const BorderSide(
+                color: Color(0xFF58B721)
             )
         ),
         suffixIcon: isPassword

@@ -18,28 +18,24 @@ class Message {
   });
 
   factory Message.fromFirestore(Map<String, dynamic> data) {
-    print("📦 Firestore 로드: ${data['type']}");
+    final text = data['text'] ?? '';
+    final timestamp = data['timestamp'];
+    final rawType = data['type'];
 
-    List<double>? parsedChartData;
-    if (data['chartData'] != null && data['chartData'] is List) {
-      try {
-        parsedChartData = List<double>.from(
-            (data['chartData'] as List).map((e) => (e as num).toDouble())
-        );
-      } catch (e) {
-        print("⚠️ chartData 파싱 실패: $e");
-      }
-    }
+    // type이 null일 경우 기본값 user
+    final type = MessageType.values.firstWhere(
+          (e) => e.toString().split('.').last == rawType,
+      orElse: () => MessageType.user,
+    );
 
     return Message(
-      content: data['text'],
-      type: MessageType.values.firstWhere(
-            (e) => e.toString().split('.').last == data['type'],
-        orElse: () => MessageType.user,
-      ),
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      content: text,
+      type: type,
+      timestamp: timestamp is Timestamp ? timestamp.toDate() : DateTime.now(),
       url: data['url'],
-      chartData: parsedChartData,
+      chartData: data['chartData'] != null
+          ? List<double>.from(data['chartData'].map((e) => e.toDouble()))
+          : null,
     );
   }
 

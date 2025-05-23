@@ -44,7 +44,7 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
     } catch (e) {
       debugPrint("링크 열기 실패: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('링크를 열 수 없습니다')),
+        const SnackBar(content: Text('링크를 열 수 없습니다')),
       );
     }
   }
@@ -57,7 +57,7 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
       ),

@@ -57,7 +57,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     dotWidth: 10,
                     spacing: 12,
                     dotColor: Colors.grey.shade400,
-                    activeDotColor: Color(0xFF57CC1C),
+                    activeDotColor: const Color(0xFF57CC1C),
                   ),
                 ),
               ),
@@ -80,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: const TextStyle(
                             fontSize: 34,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF58B721),
+                            color: Color(0xFF58B721),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -124,7 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ? () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => MainScreen()),
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
                   );
                 }
                     : null,

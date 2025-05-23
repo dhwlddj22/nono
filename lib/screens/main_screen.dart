@@ -25,8 +25,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   final List<Widget> _pages = [
     const ReportSelectionScreen(),
-    CommunityScreen(),
-    RecordScreen(),
+    const CommunityScreen(),
+    const RecordScreen(), // AI 소음 측정 (기본 화면)
     LegalScreen(),
     MarketPage(),
   ];
@@ -67,6 +67,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -118,7 +119,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ),
       activeIcon: ImageIcon(
         AssetImage(assetPath),
-        color: Color(0xFF57CC1C),
+        color: const Color(0xFF57CC1C),
       ),
       label: label,
     );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../main_screen.dart'; // 시작하기 클릭 시 이동할 메인 화면
 import 'package:nono/screens/login/onboarding_screen.dart'; // 온보딩 화면으로 이동
 
 class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +17,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start, // ✅ 왼쪽 정렬
                   children: [
-                    Text(
+                    const Text(
                       '층간소음 걱정 없이 편안한 하루를!',
                       style: TextStyle(
                         color: Colors.white,
@@ -25,8 +26,8 @@ class WelcomeScreen extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Text.rich(
+                    const SizedBox(height: 16),
+                    const Text.rich(
                       TextSpan(
                         text: '지금부터 소음 문제 해결을 위한\n',
                         style: TextStyle(
@@ -48,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Center(
                       child: Image.asset(
                         'assets/onboarding/signup_onboarding/thumbs_up.png',
@@ -68,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => OnboardingScreen()),
+                      MaterialPageRoute(builder: (context) => const OnboardingScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -77,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     '시작하기',
                     style: TextStyle(
                       color: Colors.white,

@@ -51,7 +51,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
         backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -159,7 +159,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
             Text(
               description,
               textAlign: TextAlign.left,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 height: 1.7,
                 fontWeight: FontWeight.bold,

@@ -198,6 +198,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
                       : CrossAxisAlignment.start,
                   children: [
                     ChatBubble(message: message),
+
                   ],
                 );
               },

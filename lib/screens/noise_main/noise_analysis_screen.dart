@@ -53,10 +53,25 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
 
     setState(() {
       _messages.clear();
-      _messages.addAll(messages);
+
+      // 🔍 중복되는 "chart → 바로 아래 또 chart" 구조만 제거
+      final List<Message> filtered = [];
+      for (int i = 0; i < messages.length; i++) {
+        final current = messages[i];
+
+        if (current.type == MessageType.chart) {
+          // 바로 다음 메시지가 또 chart라면 이건 중복 → 건너뜀
+          if (i > 0 && messages[i - 1].type == MessageType.chart) {
+            continue;
+          }
+        }
+
+        filtered.add(current);
+      }
+
+      _messages.addAll(filtered);
     });
   }
-
 
   Future<void> _autoAnalyze(String text) async {
     _addMessage(text, MessageType.user);
@@ -68,24 +83,32 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     setState(() => _isLoading = false);
   }
 
+
+
+
   void _addMessage(String content, MessageType type) {
-    final user = FirebaseAuth.instance.currentUser; // ✅ 현재 로그인된 사용자 가져오기
-    final message = Message(content: content, type: type, timestamp: DateTime.now());
+    final user = FirebaseAuth.instance.currentUser;
+    final message = Message(
+      content: content,
+      type: type,
+      timestamp: DateTime.now(),
+      chartData: null, // ✅ 무조건 null 처리
+    );
 
     if (content.trim().isNotEmpty && user != null) {
       FirebaseFirestore.instance.collection('chat_history').add({
         'text': content,
         'type': type.toString().split('.').last,
         'timestamp': Timestamp.now(),
-        'userId': user.uid, // ✅ 사용자 UID 저장
-        if (type == MessageType.audio) 'url': content, // URL 저장
+        'userId': user.uid,
       });
     }
 
     setState(() {
-      _messages.insert(0, message);
+      _messages.insert(0, message); // ✅ UI 렌더링에 사용되는 메시지에도 chartData 없음
     });
   }
+
 
 
   Future<void> _sendMessage() async {
@@ -170,36 +193,36 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
                       : CrossAxisAlignment.start,
                   children: [
                     ChatBubble(message: message),
-                    if (message.chartData != null)
-                      SizedBox(
-                        height: 160,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: LineChart(
-                            LineChartData(
-                              gridData: FlGridData(show: false),
-                              titlesData: FlTitlesData(show: false),
-                              borderData: FlBorderData(show: false),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: message.chartData!
-                                      .asMap()
-                                      .entries
-                                      .map((e) => FlSpot(e.key.toDouble(), e.value))
-                                      .toList(),
-                                  isCurved: true,
-                                  color: Colors.green,
-                                  dotData: FlDotData(show: false),
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                    color: Colors.green.withOpacity(0.3),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    // if (message.chartData != null)
+                    //   SizedBox(
+                    //     height: 160,
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.symmetric(horizontal: 12),
+                    //       child: LineChart(
+                    //         LineChartData(
+                    //           gridData: FlGridData(show: false),
+                    //           titlesData: FlTitlesData(show: false),
+                    //           borderData: FlBorderData(show: false),
+                    //           lineBarsData: [
+                    //             LineChartBarData(
+                    //               spots: message.chartData!
+                    //                   .asMap()
+                    //                   .entries
+                    //                   .map((e) => FlSpot(e.key.toDouble(), e.value))
+                    //                   .toList(),
+                    //               isCurved: true,
+                    //               color: Colors.green,
+                    //               dotData: FlDotData(show: false),
+                    //               belowBarData: BarAreaData(
+                    //                 show: true,
+                    //                 color: Colors.green.withOpacity(0.3),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
                   ],
                 );
               },

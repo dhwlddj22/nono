@@ -14,7 +14,8 @@ class WritePostScreen extends StatefulWidget {
   final List<String>? initialImageUrls;
   final String? initialType;
 
-  WritePostScreen({
+  const WritePostScreen({
+    super.key,
     this.isEditing = false,
     this.isReporting = false,
     this.postId,
@@ -88,16 +89,16 @@ class _WritePostScreenState extends State<WritePostScreen> {
         child: Wrap(
           children: [
             ListTile(
-              leading: Icon(Icons.camera_alt, color: Colors.blue),
-              title: Text("카메라로 촬영"),
+              leading: const Icon(Icons.camera_alt, color: Colors.blue),
+              title: const Text("카메라로 촬영"),
               onTap: () {
                 Navigator.pop(context);
                 _pickAndUploadImages(ImageSource.camera);
               },
             ),
             ListTile(
-              leading: Icon(Icons.photo_library, color: Colors.green),
-              title: Text("갤러리에서 선택"),
+              leading: const Icon(Icons.photo_library, color: Colors.green),
+              title: const Text("갤러리에서 선택"),
               onTap: () {
                 Navigator.pop(context);
                 _pickAndUploadImages(ImageSource.gallery);
@@ -119,11 +120,11 @@ class _WritePostScreenState extends State<WritePostScreen> {
         context: context,
         builder: (_) => AlertDialog(
           backgroundColor: Colors.black,
-          title: Text('입력 확인', style: TextStyle(color: Colors.white)),
-          content: Text('제목과 내용을 모두 입력해 주세요.', style: TextStyle(color: Colors.white70)),
+          title: const Text('입력 확인', style: TextStyle(color: Colors.white)),
+          content: const Text('제목과 내용을 모두 입력해 주세요.', style: TextStyle(color: Colors.white70)),
           actions: [
             TextButton(
-              child: Text('확인', style: TextStyle(color: Colors.blue)),
+              child: const Text('확인', style: TextStyle(color: Colors.blue)),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -168,7 +169,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 11.0, right: 15.0, top: 20.0),
+              padding: const EdgeInsets.only(left: 11.0, right: 15.0, top: 20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -190,14 +191,14 @@ class _WritePostScreenState extends State<WritePostScreen> {
                   children: [
                     TextField(
                       controller: _titleController,
-                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                      decoration: const InputDecoration(
                         hintText: "제목",
                         hintStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
                       ),
                     ),
-                    Divider(color: Colors.white),
+                    const Divider(color: Colors.white),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -205,8 +206,8 @@ class _WritePostScreenState extends State<WritePostScreen> {
                             TextField(
                               controller: _contentController,
                               maxLines: null,
-                              style: TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
                                 hintText: "내용을 입력하세요.",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
@@ -214,8 +215,8 @@ class _WritePostScreenState extends State<WritePostScreen> {
                               onSubmitted: (_) => _submitPost(),
                             ),
                             if (_isUploading)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
                                 child: CircularProgressIndicator(color: Colors.white),
                               ),
                             if (_imageUrls.isNotEmpty)
@@ -246,7 +247,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
                       height: 55,
@@ -258,11 +259,11 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         onPressed: _submitPost,
                         child: Text(
                           widget.isReporting ? "신고하기" : widget.isEditing ? "수정 완료" : "등록",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                          style: const TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

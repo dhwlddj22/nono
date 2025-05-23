@@ -58,7 +58,7 @@ class LegalScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
                 Text(
                   "📜 법적 대응이 필요할 때\n확실한 해결책을 찾아보세요.",
@@ -70,7 +70,7 @@ class LegalScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: lawyers.length,
@@ -87,12 +87,12 @@ class LegalScreen extends StatelessWidget {
 
   Widget _buildLawyerCard(BuildContext context, Lawyer lawyer) {
     return Container(
-      margin: EdgeInsets.only(bottom: 25),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 25),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.1),
             blurRadius: 5,
@@ -109,19 +109,19 @@ class LegalScreen extends StatelessWidget {
                 radius: 24,
                 backgroundImage: AssetImage(lawyer.image),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     lawyer.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     lawyer.field,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
@@ -130,15 +130,15 @@ class LegalScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Divider(color: Colors.grey.shade300),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Icon(Icons.phone, color: Colors.grey, size: 18),
-                  SizedBox(width: 4),
+                  const Icon(Icons.phone, color: Colors.grey, size: 18),
+                  const SizedBox(width: 4),
                   Text(
                     lawyer.phone,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
@@ -147,8 +147,8 @@ class LegalScreen extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Icon(Icons.access_time, color: Colors.grey, size: 18),
-                  SizedBox(width: 4),
+                  const Icon(Icons.access_time, color: Colors.grey, size: 18),
+                  const SizedBox(width: 4),
                   Text(
                     lawyer.workingHours,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
@@ -157,7 +157,7 @@ class LegalScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           TextButton(
             onPressed: () {
               Navigator.push(
@@ -168,7 +168,7 @@ class LegalScreen extends StatelessWidget {
             },
             style: TextButton.styleFrom(
               backgroundColor: Colors.blue.shade50,
-              minimumSize: Size(double.infinity, 36),
+              minimumSize: const Size(double.infinity, 36),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(40),
               ),

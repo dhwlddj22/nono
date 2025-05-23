@@ -4,6 +4,8 @@ import 'postdetail_screen.dart';
 import 'writepost_screen.dart';
 
 class CommunityScreen extends StatelessWidget {
+  const CommunityScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,15 +22,15 @@ class CommunityScreen extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset('assets/logo2.png', width: 95, height: 74),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   "고민을 나누고 해결책을 찾아보세요.",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -36,7 +38,7 @@ class CommunityScreen extends StatelessWidget {
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
                 final posts = snapshot.data!.docs.where((doc) {
                   final data = doc.data() as Map<String, dynamic>;
@@ -44,7 +46,7 @@ class CommunityScreen extends StatelessWidget {
                 }).toList();
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
                     final post = posts[index];
@@ -86,7 +88,7 @@ class CommunityScreen extends StatelessWidget {
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.all(0),
+                                padding: const EdgeInsets.all(0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
@@ -112,7 +114,7 @@ class CommunityScreen extends StatelessWidget {
                                       )
                                           : Image.asset('assets/community/image.png', width: 30, height: 30),
                                     ),
-                                    SizedBox(width: 12),
+                                    const SizedBox(width: 12),
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -121,7 +123,7 @@ class CommunityScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               title,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15,
                                                 color: Colors.black,
@@ -129,7 +131,7 @@ class CommunityScreen extends StatelessWidget {
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
                                             ),
-                                            SizedBox(height: 6),
+                                            const SizedBox(height: 6),
                                             Text(
                                               authorName,
                                               style: TextStyle(
@@ -137,7 +139,7 @@ class CommunityScreen extends StatelessWidget {
                                                 color: Colors.grey[600],
                                               ),
                                             ),
-                                            SizedBox(height: 6),
+                                            const SizedBox(height: 6),
                                             Text(
                                               '댓글 $commentCount개 · 좋아요 $likes개',
                                               style: TextStyle(
@@ -153,8 +155,8 @@ class CommunityScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
                               child: Divider(color: Colors.white38, thickness: 1),
                             ),
                           ],
@@ -172,12 +174,12 @@ class CommunityScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WritePostScreen()),
+            MaterialPageRoute(builder: (context) => const WritePostScreen()),
           );
         },
         backgroundColor: const Color(0xFF58B721),
-        child: Icon(Icons.edit, color: Colors.white),
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
+        child: const Icon(Icons.edit, color: Colors.white),
       ),
     );
   }

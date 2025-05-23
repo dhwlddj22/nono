@@ -18,6 +18,27 @@ class Message {
   });
 
   factory Message.fromFirestore(Map<String, dynamic> data) {
+    final text = data['text'] ?? '';
+    final timestamp = data['timestamp'];
+    final rawType = data['type'];
+
+    // type이 null일 경우 기본값 user
+    final type = MessageType.values.firstWhere(
+          (e) => e.toString().split('.').last == rawType,
+      orElse: () => MessageType.user,
+    );
+
+    return Message(
+      content: text,
+      type: type,
+      timestamp: timestamp is Timestamp ? timestamp.toDate() : DateTime.now(),
+      url: data['url'],
+      chartData: data['chartData'] != null
+          ? List<double>.from(data['chartData'].map((e) => e.toDouble()))
+          : null,
+    );
+
+    /*
     return Message(
       content: data['text'],
       type: MessageType.values.firstWhere(
@@ -30,6 +51,7 @@ class Message {
           ? List<double>.from(data['chartData'].map((e) => e.toDouble()))
           : null,
     );
+    */
   }
 }
 

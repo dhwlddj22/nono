@@ -7,7 +7,7 @@ class CommentsScreen extends StatefulWidget {
   final String postId;
   final String postTitle;
 
-  CommentsScreen({required this.postId, required this.postTitle});
+  const CommentsScreen({super.key, required this.postId, required this.postTitle});
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -46,12 +46,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: Colors.black,
-        title: Text("댓글 수정", style: TextStyle(color: Colors.white)),
+        title: const Text("댓글 수정", style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: controller,
           maxLines: null,
-          style: TextStyle(color: Colors.white),
-          decoration: InputDecoration(
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
             hintText: "내용 수정",
             hintStyle: TextStyle(color: Colors.white38),
           ),
@@ -59,7 +59,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("취소", style: TextStyle(color: Colors.grey)),
+            child: const Text("취소", style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () async {
@@ -74,7 +74,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               }
               Navigator.pop(context);
             },
-            child: Text("수정", style: TextStyle(color: Colors.blue)),
+            child: const Text("수정", style: TextStyle(color: Colors.blue)),
           ),
         ],
       ),
@@ -86,15 +86,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: Colors.black,
-        title: Text("댓글 삭제", style: TextStyle(color: Colors.white)),
-        content: Text("댓글을 삭제하시겠습니까?", style: TextStyle(color: Colors.white70)),
+        title: const Text("댓글 삭제", style: TextStyle(color: Colors.white)),
+        content: const Text("댓글을 삭제하시겠습니까?", style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
-            child: Text("취소", style: TextStyle(color: Colors.grey)),
+            child: const Text("취소", style: TextStyle(color: Colors.grey)),
             onPressed: () => Navigator.pop(context, false),
           ),
           TextButton(
-            child: Text("삭제", style: TextStyle(color: Colors.red)),
+            child: const Text("삭제", style: TextStyle(color: Colors.red)),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -136,8 +136,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: BackButton(color: Colors.white),
-        title: Text(widget.postTitle, style: TextStyle(color: Colors.white, fontSize: 20)),
+        leading: const BackButton(color: Colors.white),
+        title: Text(widget.postTitle, style: const TextStyle(color: Colors.white, fontSize: 20)),
       ),
       body: Column(
         children: [
@@ -150,14 +150,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   .orderBy('timestamp', descending: false)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
                 final comments = snapshot.data!.docs;
 
                 return ListView.separated(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   itemCount: comments.length,
-                  separatorBuilder: (_, __) => Divider(color: Colors.white12),
+                  separatorBuilder: (_, __) => const Divider(color: Colors.white12),
                   itemBuilder: (context, index) {
                     final doc = comments[index];
                     final data = doc.data() as Map<String, dynamic>;
@@ -174,9 +174,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.blue.shade200,
-                          child: Icon(Icons.person, color: Colors.white, size: 18),
+                          child: const Icon(Icons.person, color: Colors.white, size: 18),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,15 +187,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   Expanded(
                                     child: RichText(
                                       text: TextSpan(
-                                        style: TextStyle(color: Colors.white, fontSize: 15, height: 1.5),
+                                        style: const TextStyle(color: Colors.white, fontSize: 15, height: 1.5),
                                         children: [
                                           TextSpan(
                                             text: '$userName\n',
-                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                           TextSpan(
                                             text: text,
-                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -204,18 +204,23 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   PopupMenuButton<String>(
                                     color: Colors.white,
                                     onSelected: (value) {
-                                      if (value == 'edit') _editComment(commentId, text);
-                                      else if (value == 'delete') _deleteComment(commentId);
-                                      else if (value == 'report') _reportComment(userName, text);
+                                      if (value == 'edit') {
+                                        _editComment(commentId, text);
+                                      } else if (value == 'delete') {
+                                        _deleteComment(commentId);
+                                      }
+                                      else if (value == 'report') {
+                                        _reportComment(userName, text);
+                                      }
                                     },
                                     itemBuilder: (_) {
                                       if (isOwner) {
                                         return [
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: 'edit',
                                             child: Text("수정", style: TextStyle(color: Colors.black)),
                                           ),
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: 'delete',
                                             child: Text("삭제", style: TextStyle(color: Colors.black)),
                                           ),
@@ -223,18 +228,18 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
                                       } else {
                                         return [
-                                          PopupMenuItem(value: 'report', child: Text("신고")),
+                                          const PopupMenuItem(value: 'report', child: Text("신고")),
                                         ];
                                       }
                                     },
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 '${timestamp.year}.${timestamp.month.toString().padLeft(2, '0')}.${timestamp.day.toString().padLeft(2, '0')} '
                                     '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}',
-                                style: TextStyle(color: Colors.white54, fontSize: 11),
+                                style: const TextStyle(color: Colors.white54, fontSize: 11),
                               ),
                             ],
                           ),
@@ -246,7 +251,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               },
             ),
           ),
-          Divider(color: Colors.white24),
+          const Divider(color: Colors.white24),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
@@ -254,14 +259,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 Expanded(
                   child: TextField(
                     controller: _commentController,
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                     onSubmitted: (_) => _addComment(),
                     decoration: InputDecoration(
                       hintText: "댓글을 남겨보세요",
-                      hintStyle: TextStyle(color: Colors.black54),
+                      hintStyle: const TextStyle(color: Colors.black54),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
                         borderSide: BorderSide.none,
@@ -269,11 +274,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_forward, color: Colors.black),
+                    icon: const Icon(Icons.arrow_forward, color: Colors.black),
                     onPressed: _addComment,
                   ),
                 ),

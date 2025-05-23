@@ -67,7 +67,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                     dotWidth: 8,
                     spacing: 8,
                     dotColor: Colors.grey.shade700,
-                    activeDotColor: Color(0xFF58B721),
+                    activeDotColor: const Color(0xFF58B721),
                   ),
                 ),
               ),
@@ -79,7 +79,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                 children: [
                   _buildPage(
                     title: 'Understand',
-                    body: Column(
+                    body: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -90,7 +90,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                               "이를 해결하기 위해 정부가 설립한 공공기관이",
                           style: tutorialBodyStyle,
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         Text("층간소음 이웃사이센터입니다.", style: tutorialHighlightStyle),
                       ],
                     ),
@@ -101,7 +101,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                   ),
                   _buildPage(
                     title: 'Support',
-                    body: Text(
+                    body: const Text(
                       "이웃사이센터는 중립적인 입장에서\n이웃 간 갈등을 중재합니다.\n\n"
                           "전화/인터넷 상담, 전문가 방문 소음 측정, 문제 조정까지\n\n"
                           "전 과정을 무료로 지원하며,\n"
@@ -120,7 +120,7 @@ class _GovTutorialScreenState extends State<GovTutorialScreen> {
                   ),
                   _buildPage(
                     title: 'Start',
-                    body: Text(
+                    body: const Text(
                       "혼자 고민하지 마세요.\n\n층간소음 문제, 이웃사이센터가 함께합니다.\n\n"
                           "• 매일 소음으로 고통받는 분\n"
                           "• 감정 싸움 없이 해결하고 싶은 분\n"

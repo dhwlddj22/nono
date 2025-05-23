@@ -12,7 +12,8 @@ class PostDetailScreen extends StatefulWidget {
   final List<String> imageUrls;
   final DateTime timestamp;
 
-  PostDetailScreen({
+  const PostDetailScreen({
+    super.key,
     required this.postId,
     required this.title,
     required this.authorEmail,
@@ -49,15 +50,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: Colors.black,
-        title: Text("게시글 삭제", style: TextStyle(color: Colors.white)),
-        content: Text("정말 이 게시글을 삭제하시겠습니까?", style: TextStyle(color: Colors.white70)),
+        title: const Text("게시글 삭제", style: TextStyle(color: Colors.white)),
+        content: const Text("정말 이 게시글을 삭제하시겠습니까?", style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
-            child: Text("취소", style: TextStyle(color: Colors.grey)),
+            child: const Text("취소", style: TextStyle(color: Colors.grey)),
             onPressed: () => Navigator.pop(context, false),
           ),
           TextButton(
-            child: Text("삭제", style: TextStyle(color: Colors.red)),
+            child: const Text("삭제", style: TextStyle(color: Colors.red)),
             onPressed: () => Navigator.pop(context, true),
           ),
         ],
@@ -77,7 +78,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 35), // ← 여기서 size 조절
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 35), // ← 여기서 size 조절
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
@@ -117,19 +118,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             itemBuilder: (_) {
               final isAuthor = user?.email == widget.authorEmail;
               return [
-                if (!isAuthor) PopupMenuItem(value: 'report', child: Text("신고")),
-                if (isAuthor) PopupMenuItem(value: 'edit', child: Text("수정")),
-                if (isAuthor) PopupMenuItem(value: 'delete', child: Text("삭제")),
+                if (!isAuthor) const PopupMenuItem(value: 'report', child: Text("신고")),
+                if (isAuthor) const PopupMenuItem(value: 'edit', child: Text("수정")),
+                if (isAuthor) const PopupMenuItem(value: 'delete', child: Text("삭제")),
               ];
             },
-            icon: Icon(Icons.more_vert, color: Colors.white,size: 35,),
+            icon: const Icon(Icons.more_vert, color: Colors.white,size: 35,),
           ),
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('posts').doc(widget.postId).snapshots(),
         builder: (context, postSnapshot) {
-          if (!postSnapshot.hasData) return Center(child: CircularProgressIndicator());
+          if (!postSnapshot.hasData) return const Center(child: CircularProgressIndicator());
 
           final data = postSnapshot.data!.data() as Map<String, dynamic>;
           final title = data['title'] ?? '';
@@ -148,32 +149,32 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.grey[400],
-                      child: Icon(Icons.person, color: Colors.white),
+                      child: const Icon(Icons.person, color: Colors.white),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           data['authorName'] ?? widget.authorEmail,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
 
                         Text(
                           "${widget.timestamp.year}.${widget.timestamp.month.toString().padLeft(2, '0')}.${widget.timestamp.day.toString().padLeft(2, '0')} "
                               "${widget.timestamp.hour.toString().padLeft(2, '0')}:${widget.timestamp.minute.toString().padLeft(2, '0')}",
-                          style: TextStyle(color: Colors.white54, fontSize: 12),
+                          style: const TextStyle(color: Colors.white54, fontSize: 12),
                         ),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(height: 13),
+                const SizedBox(height: 13),
                 Text(
                   title,
-                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                Divider(color: Colors.white),
+                const Divider(color: Colors.white),
                 if (imageUrls.isNotEmpty)
                   ...imageUrls.map((url) => Padding(
                     padding: const EdgeInsets.only(bottom: 10),
@@ -182,10 +183,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       child: Image.network(url, fit: BoxFit.cover),
                     ),
                   )),
-                SizedBox(height: 12),
-                Text(content, style: TextStyle(color: Colors.white, fontSize: 18)),
-                SizedBox(height: 30),
-                Divider(color: Colors.white30),
+                const SizedBox(height: 12),
+                Text(content, style: const TextStyle(color: Colors.white, fontSize: 18)),
+                const SizedBox(height: 30),
+                const Divider(color: Colors.white30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -197,12 +198,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             isLiked ? Icons.favorite : Icons.favorite_border,
                             color: isLiked ? Colors.red : Colors.white,
                           ),
-                          SizedBox(width: 4),
-                          Text('$likes', style: TextStyle(color: Colors.white)),
+                          const SizedBox(width: 4),
+                          Text('$likes', style: const TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -217,9 +218,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       },
                       child: Row(
                         children: [
-                          Icon(Icons.chat_bubble_outline, color: Colors.white),
-                          SizedBox(width: 4),
-                          Text('$commentCount', style: TextStyle(color: Colors.white)),
+                          const Icon(Icons.chat_bubble_outline, color: Colors.white),
+                          const SizedBox(width: 4),
+                          Text('$commentCount', style: const TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),

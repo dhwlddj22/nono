@@ -162,12 +162,12 @@ class NotifyPage extends State<_ReportSelectionHome> {
             color: isSelected ? const Color(0xFF58B721) : Colors.grey.shade300,
             width: 2,
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: const Color.fromRGBO(0, 0, 0, 0.1),
+              color: Color.fromRGBO(0, 0, 0, 0.1),
               blurRadius: 5,
               spreadRadius: 1,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),

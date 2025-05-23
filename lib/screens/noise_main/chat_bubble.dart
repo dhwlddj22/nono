@@ -49,6 +49,7 @@ class ChatBubble extends StatelessWidget {
           .entries
           .map((e) => FlSpot(e.key.toDouble(), e.value))
           .toList();
+
       contentWidget = SizedBox(
         height: 150,
         width: 250,
@@ -57,6 +58,19 @@ class ChatBubble extends StatelessWidget {
             gridData: FlGridData(show: false),
             titlesData: FlTitlesData(show: false),
             borderData: FlBorderData(show: false),
+            lineTouchData: LineTouchData(
+              touchTooltipData: LineTouchTooltipData(
+                tooltipBgColor: Colors.grey.shade800,
+                getTooltipItems: (touchedSpots) {
+                  return touchedSpots.map((spot) {
+                    return LineTooltipItem(
+                      "${spot.y.toStringAsFixed(2)} dB", // ✅ 툴팁 소수점 2자리 + dB
+                      TextStyle(color: Colors.white),
+                    );
+                  }).toList();
+                },
+              ),
+            ),
             lineBarsData: [
               LineChartBarData(
                 spots: points,

@@ -98,6 +98,10 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
+
+    _stopwatch.stop();
+    if (_timer.isActive) _timer.cancel();
+
     _showLoadingDialog(isSuccess: false, width: 120, height: 120);
 
     await _recorder.stopRecorder();
@@ -150,10 +154,10 @@ class _RecordScreenState extends State<RecordScreen> {
 // Save to Firestore
     await FirebaseFirestore.instance.collection('chat_history').add({
       'text': chartMessage.content,
-      'type': 'chart',
+      'type': 'chart', // 정확히
       'timestamp': Timestamp.now(),
       'userId': FirebaseAuth.instance.currentUser?.uid,
-      'chartData': _decibelValues,
+      'chartData': _decibelValues, // 정확히
     });
 
     Navigator.pop(context); // Close loading

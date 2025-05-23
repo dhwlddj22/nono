@@ -66,6 +66,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
     if (confirm == true) {
       await FirebaseFirestore.instance.collection('posts').doc(widget.postId).delete();
+      await Future.delayed(Duration(milliseconds: 200));
       Navigator.pop(context);
     }
   }
@@ -77,7 +78,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 35), // ← 여기서 size 조절
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 35),
           onPressed: () => Navigator.pop(context),
         ),
         elevation: 0,
@@ -122,14 +123,25 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 if (isAuthor) PopupMenuItem(value: 'delete', child: Text("삭제")),
               ];
             },
-            icon: Icon(Icons.more_vert, color: Colors.white,size: 35,),
+            icon: Icon(Icons.more_vert, color: Colors.white, size: 35),
           ),
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('posts').doc(widget.postId).snapshots(),
         builder: (context, postSnapshot) {
-          if (!postSnapshot.hasData) return Center(child: CircularProgressIndicator());
+          if (postSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!postSnapshot.hasData || !postSnapshot.data!.exists) {
+            return Center(
+              child: Text(
+                "",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            );
+          }
 
           final data = postSnapshot.data!.data() as Map<String, dynamic>;
           final title = data['title'] ?? '';
@@ -158,7 +170,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           data['authorName'] ?? widget.authorEmail,
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
-
                         Text(
                           "${widget.timestamp.year}.${widget.timestamp.month.toString().padLeft(2, '0')}.${widget.timestamp.day.toString().padLeft(2, '0')} "
                               "${widget.timestamp.hour.toString().padLeft(2, '0')}:${widget.timestamp.minute.toString().padLeft(2, '0')}",
@@ -230,7 +241,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           );
         },
       ),
-
     );
   }
 }

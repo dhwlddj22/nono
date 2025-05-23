@@ -67,6 +67,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
     if (confirm == true) {
       await FirebaseFirestore.instance.collection('posts').doc(widget.postId).delete();
+      await Future.delayed(Duration(milliseconds: 200));
       Navigator.pop(context);
     }
   }
@@ -130,7 +131,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('posts').doc(widget.postId).snapshots(),
         builder: (context, postSnapshot) {
-          if (!postSnapshot.hasData) return const Center(child: CircularProgressIndicator());
+          if (postSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!postSnapshot.hasData || !postSnapshot.data!.exists) {
+            return Center(
+              child: Text(
+                "",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            );
+          }
 
           final data = postSnapshot.data!.data() as Map<String, dynamic>;
           final title = data['title'] ?? '';
@@ -159,7 +171,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           data['authorName'] ?? widget.authorEmail,
                           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
-
                         Text(
                           "${widget.timestamp.year}.${widget.timestamp.month.toString().padLeft(2, '0')}.${widget.timestamp.day.toString().padLeft(2, '0')} "
                               "${widget.timestamp.hour.toString().padLeft(2, '0')}:${widget.timestamp.minute.toString().padLeft(2, '0')}",
@@ -231,7 +242,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           );
         },
       ),
-
     );
   }
 }

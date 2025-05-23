@@ -108,10 +108,11 @@ class RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecording() async {
+
     _stopwatch.stop();
-    if (_timer.isActive) {
-      _timer.cancel();
-    }
+    if (_timer.isActive) _timer.cancel();
+
+
     _showLoadingDialog(isSuccess: false, width: 120, height: 120);
 
     await _recorder.stopRecorder();
@@ -159,11 +160,11 @@ class RecordScreenState extends State<RecordScreen> {
     final aiReply = response[1] as String? ?? "AI 응답 실패";
 
     await FirebaseFirestore.instance.collection('chat_history').add({
-      'text': aiReply,
-      'type': 'ai',
-      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'text': chartMessage.content,
+      'type': 'chart', // 정확히
       'timestamp': Timestamp.now(),
-      'chartData': _decibelValues,
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+      'chartData': _decibelValues, // 정확히
     });
 
     Navigator.pop(context); // Close loading

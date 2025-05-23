@@ -37,21 +37,7 @@ class Message {
           ? List<double>.from(data['chartData'].map((e) => e.toDouble()))
           : null,
     );
-
-    /*
-    return Message(
-      content: data['text'],
-      type: MessageType.values.firstWhere(
-            (e) => e.toString().split('.').last == data['type'],
-        orElse: () => MessageType.user,
-      ),
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
-      url: data['url'],
-      chartData: data['chartData'] != null
-          ? List<double>.from(data['chartData'].map((e) => e.toDouble()))
-          : null,
-    );
-    */
   }
+
 }
 

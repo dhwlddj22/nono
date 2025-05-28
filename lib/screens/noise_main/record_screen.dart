@@ -294,10 +294,7 @@ class RecordScreenState extends State<RecordScreen> {
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.chat, color: Colors.white),
-            onPressed: () async {
-              if (_isRecording) {
-                await _cancelRecording(); // ← 녹음 중이면 먼저 종료
-              }
+            onPressed: () {
               Scaffold.of(context).openDrawer(); // ← 햄버거 누르면 drawer 열기
             },
           ),
@@ -368,7 +365,11 @@ class RecordScreenState extends State<RecordScreen> {
                               DateFormat('yyyy.MM.dd HH:mm').format(message.timestamp),
                               style: const TextStyle(color: Colors.grey, fontSize: 12),
                             ),
-                          onTap: () {
+                          onTap: () async {
+                            if (_isRecording) {
+                              await _cancelRecording(); // ← 녹음 중이면 먼저 종료
+                            }
+
                             final message = chatHistory[index];
                             final formattedDate = DateFormat('yy/MM/dd').format(message.timestamp);
 

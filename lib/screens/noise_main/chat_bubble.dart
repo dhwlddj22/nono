@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:just_audio/just_audio.dart';
 import 'message.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -19,14 +20,9 @@ class ChatBubble extends StatelessWidget {
     if (message.type == MessageType.audio && message.url != null) {
       contentWidget = GestureDetector(
         onTap: () async {
-          final uri = Uri.parse(message.url!);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("파일을 열 수 없습니다.")),
-            );
-          }
+          final player = AudioPlayer();
+          await player.setUrl(message.url!);
+          player.play();
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -65,7 +61,7 @@ class ChatBubble extends StatelessWidget {
                   return touchedSpots.map((spot) {
                     return LineTooltipItem(
                       "${spot.y.toStringAsFixed(2)} dB", // ✅ 툴팁 소수점 2자리 + dB
-                      TextStyle(color: Colors.white),
+                      const TextStyle(color: Colors.white),
                     );
                   }).toList();
                 },

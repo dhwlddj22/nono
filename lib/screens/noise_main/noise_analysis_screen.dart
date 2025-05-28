@@ -1,14 +1,15 @@
+/*
 import 'dart:io';
-import 'package:fl_chart/fl_chart.dart';
+// import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nono/screens/noise_main/chat_history_screen.dart';
+// import 'package:nono/screens/noise_main/chat_history_screen.dart';
 import "package:nono/screens/noise_main/message.dart";
-import 'package:nono/screens/noise_main/chat_bubble.dart';
+// import 'package:nono/screens/noise_main/chat_bubble.dart';
 import 'openai_service.dart';
-import 'my_page_screen.dart';
+// import 'my_page_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -83,9 +84,6 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     setState(() => _isLoading = false);
   }
 
-
-
-
   void _addMessage(String content, MessageType type) {
     final user = FirebaseAuth.instance.currentUser;
     final message = Message(
@@ -108,8 +106,6 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       _messages.insert(0, message); // ✅ UI 렌더링에 사용되는 메시지에도 chartData 없음
     });
   }
-
-
 
   Future<void> _sendMessage() async {
     final userInput = _controller.text.trim();
@@ -147,7 +143,6 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -266,3 +261,4 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     );
   }
 }
+*/

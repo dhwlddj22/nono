@@ -12,13 +12,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:lottie/lottie.dart';
-import 'NoiseAnalysisChatScreenWithNav.dart';
+// import 'NoiseAnalysisChatScreenWithNav.dart';
 import 'package:intl/intl.dart';
 import 'chat_detail_screen.dart';
 import 'chat_history_screen.dart';
 import 'message.dart';
 import 'my_page_screen.dart';
-import 'noise_analysis_screen.dart';
+// import 'noise_analysis_screen.dart';
 import 'noise_prompt_builder.dart';
 import 'openai_service.dart';
 
@@ -43,6 +43,7 @@ class RecordScreenState extends State<RecordScreen> {
   final Stopwatch _stopwatch = Stopwatch();
   late Timer _timer;
   String? selectedFormattedDate; // 채팅 기록 날짜 (상태변수)
+  String? pendingInput; // chat_detail_screen에 넘기는 데이터
 
   @override
   void initState() {
@@ -157,7 +158,7 @@ class RecordScreenState extends State<RecordScreen> {
       OpenAIService.analyzeNoise(prompt),
     ]);
 
-    final aiReply = response[1] as String? ?? "AI 응답 실패";
+    final _ = response[1] as String? ?? "AI 응답 실패";
 
     final chartMessage = Message(
       content: '소음 분석 그래프',
@@ -182,12 +183,11 @@ class RecordScreenState extends State<RecordScreen> {
 
     if (mounted) {
       Navigator.pop(context); // Close success animation
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => NoiseAnalysisChatScreenWithNav(initialInput: prompt),
-        ),
-      );
+      setState(() {
+        selectedFormattedDate = DateFormat('yy/MM/dd').format(DateTime.now());
+        pendingInput = prompt; // 분석된 입력 저장
+        viewMode = ViewMode.detail;
+      });
     }
     setState(() {
       _isRecording = false;
@@ -206,6 +206,7 @@ class RecordScreenState extends State<RecordScreen> {
       _isRecording = false;
       _recordFilePath = null;
       _decibelValues.clear();
+      viewMode = ViewMode.idle; // 상태를 idle로 리셋
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -293,7 +294,10 @@ class RecordScreenState extends State<RecordScreen> {
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.chat, color: Colors.white),
-            onPressed: () {
+            onPressed: () async {
+              if (_isRecording) {
+                await _cancelRecording(); // ← 녹음 중이면 먼저 종료
+              }
               Scaffold.of(context).openDrawer(); // ← 햄버거 누르면 drawer 열기
             },
           ),
@@ -389,16 +393,19 @@ class RecordScreenState extends State<RecordScreen> {
       body: _isRecording
           ? _buildRecordingView()
           : viewMode == ViewMode.history
-          ? ChatHistoryScreen(
-        selectedDate: selectedFormattedDate,
-        onExit: () {
-          setState(() {
-            viewMode = ViewMode.idle;
-          });
-        },
-      )
+            ? ChatHistoryScreen(
+              selectedDate: selectedFormattedDate,
+              onExit: () {
+                setState(() {
+                  viewMode = ViewMode.idle;
+                });
+              },
+            )
           : viewMode == ViewMode.detail && selectedFormattedDate != null
-          ? ChatDetailScreen(dateKey: selectedFormattedDate!)
+            ? ChatDetailScreen(
+              dateKey: selectedFormattedDate!,
+              initialInput: pendingInput,
+            )
           : _buildIdleView(),
     );
   }
@@ -455,7 +462,17 @@ class RecordScreenState extends State<RecordScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NoiseAnalysisChatScreen())),
+              onTap: () async {
+                if (_isRecording) {
+                  await _cancelRecording(); // ← 녹음 중이면 먼저 종료
+                }
+
+                setState(() {
+                  selectedFormattedDate = DateFormat('yy/MM/dd').format(DateTime.now());
+                  pendingInput = null; // 분석 요청 없이 채팅만 보기
+                  viewMode = ViewMode.detail;
+                });
+              },
               child: SvgPicture.asset('assets/noise_main/chat.svg', width: 38, height: 38),
             ),
             const SizedBox(width: 20),

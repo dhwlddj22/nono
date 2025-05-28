@@ -11,8 +11,9 @@ import 'record_screen.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   final String dateKey;
+  final String? initialInput;
 
-  const ChatDetailScreen({super.key, required this.dateKey});
+  const ChatDetailScreen({super.key, required this.dateKey, this.initialInput});
 
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -21,6 +22,26 @@ class ChatDetailScreen extends StatefulWidget {
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
+
+  // record screen 에서 녹음 파일 전달 받아 초기 분석
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialInput != null && widget.initialInput!.trim().isNotEmpty) {
+      _autoAnalyze(widget.initialInput!);
+    }
+  }
+
+  // 자동 분석 메소드
+  Future<void> _autoAnalyze(String input) async {
+    _addMessage(input, MessageType.user);
+    setState(() => _isLoading = true);
+
+    final aiReply = await OpenAIService.analyzeNoise(input);
+    _addMessage(aiReply ?? "AI 응답 실패", MessageType.ai);
+
+    setState(() => _isLoading = false);
+  }
 
   void _addMessage(String content, MessageType type) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -70,7 +91,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       await FirebaseFirestore.instance.collection('chat_history').add({
         'text': fileName,
         'url': downloadUrl,
-        'type': 'file',
+        'type': 'audio',
         'userId': user.uid,
         'timestamp': Timestamp.now(),
       });

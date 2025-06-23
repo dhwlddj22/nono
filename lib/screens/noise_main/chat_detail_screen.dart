@@ -95,8 +95,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             child: Divider(
               height: 1,
               thickness: 1,
-              indent: 16,     // 왼쪽 여백
-              endIndent: 16,  // 오른쪽 여백
+              indent: 16,
+              endIndent: 16,
               color: Color(0xFF58B721),
             ),
           ),
@@ -115,13 +115,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       );
     }
 
-    final parts = widget.dateKey.split('/');
-    final year = 2000 + int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final day = int.parse(parts[2]);
-    final startOfDay = DateTime(year, month, day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
+    late DateTime startOfDay;
+    late DateTime endOfDay;
 
+    try {
+      final parts = widget.dateKey.split('/');
+      final year = 2000 + int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final day = int.parse(parts[2]);
+      startOfDay = DateTime(year, month, day);
+      endOfDay = startOfDay.add(const Duration(days: 1));
+    } catch (e) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("날짜 오류"),
+          backgroundColor: Colors.black,
+        ),
+        body: const Center(
+          child: Text(
+            "날짜 포맷 오류: 올바르지 않은 dateKey입니다.",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        backgroundColor: Colors.black,
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -138,8 +156,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           child: Divider(
             height: 1,
             thickness: 1,
-            indent: 16,     // 왼쪽 여백
-            endIndent: 16,  // 오른쪽 여백
+            indent: 16,
+            endIndent: 16,
             color: Color(0xFF58B721),
           ),
         ),
@@ -186,7 +204,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           : null,
                     );
 
-
                     return ChatBubble(message: msg);
                   },
                 );
@@ -198,6 +215,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
     );
   }
+
 
   Widget _buildInputArea() {
     return SafeArea(

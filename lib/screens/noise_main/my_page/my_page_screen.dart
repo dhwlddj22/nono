@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../login/login_screen.dart';
+import '../../login/login_screen.dart';
+import 'noise_history_screen.dart';
+import 'notification_settings_screen.dart';
+
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({super.key});
@@ -139,10 +142,31 @@ class _MyPageScreenState extends State<MyPageScreen> {
           Expanded(
             child: ListView(
               children: [
-                _buildListTile('소음 기록', Icons.history),
+                _buildListTile(
+                  '소음 기록',
+                  Icons.history,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const NoiseHistoryScreen(),
+                      ),
+                    );
+                  },
+                ),
                 _buildListTile('신고 내역', Icons.report),
                 _buildListTile('연동 기기', Icons.devices),
-                _buildListTile('알림 설정', Icons.notifications),
+              _buildListTile(
+                  '알림 설정', Icons.notifications,
+                  onTap: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (_) => const NotificationSettingsScreen(),
+                     ),
+                   );
+                 },
+              ),
                 _buildListTile('테마 및 UI 설정', Icons.palette),
                 _buildListTile('언어 설정', Icons.language),
                 _buildListTile('개인 정보 보호', Icons.lock),

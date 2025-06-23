@@ -17,7 +17,7 @@ import 'package:intl/intl.dart';
 import 'chat_detail_screen.dart';
 import 'chat_history_screen.dart';
 import 'message.dart';
-import 'my_page_screen.dart';
+import 'my_page/my_page_screen.dart';
 import 'noise_analysis_screen.dart';
 import 'noise_prompt_builder.dart';
 import 'openai_service.dart';
@@ -143,6 +143,7 @@ class RecordScreenState extends State<RecordScreen> {
       'peak_db': peakDb.toStringAsFixed(2),
       'timestamp': Timestamp.now(),
       'decibel_values': _decibelValues, // 데시벨 데이터 저장
+      'userId'        : FirebaseAuth.instance.currentUser!.uid,  // ← 이 줄 추가
     });
 
     // 병렬 처리
@@ -354,16 +355,16 @@ class RecordScreenState extends State<RecordScreen> {
                         ListTile(
                           contentPadding: EdgeInsets.zero,
                           title:
-                            Text(
-                              message.content,
-                              style: const TextStyle(color: Colors.white, fontSize: 14),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: Text(
-                              DateFormat('yyyy.MM.dd HH:mm').format(message.timestamp),
-                              style: const TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
+                          Text(
+                            message.content,
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Text(
+                            DateFormat('yyyy.MM.dd HH:mm').format(message.timestamp),
+                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
                           onTap: () {
                             final message = chatHistory[index];
                             final formattedDate = DateFormat('yy/MM/dd').format(message.timestamp);

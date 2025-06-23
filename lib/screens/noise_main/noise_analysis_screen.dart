@@ -8,7 +8,7 @@ import 'package:nono/screens/noise_main/chat_history_screen.dart';
 import "package:nono/screens/noise_main/message.dart";
 import 'package:nono/screens/noise_main/chat_bubble.dart';
 import 'openai_service.dart';
-import 'my_page_screen.dart';
+import 'my_page/my_page_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 

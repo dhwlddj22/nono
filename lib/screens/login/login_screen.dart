@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nono/screens/login/sign_up_screen.dart';
+import 'package:nono/services/auth_service.dart';
 import '../main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true; // 비밀번호 가리기 여부
+  bool _obscureText = true;
 
   Future<void> _login() async {
     try {
@@ -21,15 +22,39 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-      );
+      _goToMain();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('로그인 실패: ${e.toString()}')),
-      );
+      _showError('로그인 실패: $e');
     }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    try {
+      await AuthService.signInWithGoogle();
+      _goToMain();
+    } catch (e) {
+      _showError('구글 로그인 실패: $e');
+    }
+  }
+
+  Future<void> _loginWithKakao() async {
+    try {
+      await AuthService.signInWithKakao();
+      _goToMain();
+    } catch (e) {
+      _showError('카카오 로그인 실패: $e');
+    }
+  }
+
+  void _goToMain() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainScreen()),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -39,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start, // 위치 수정
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 45),
@@ -59,6 +84,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               child: const Text('로그인', style: TextStyle(color: Colors.white, fontSize: 18)),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildSocialButton(
+                  assetPath: 'assets/google_logo.png',
+                  onTap: _loginWithGoogle,
+                  size: 72,
+                ),
+                _buildSocialButton(
+                  assetPath: 'assets/kakao_logo.png',
+                  onTap: _loginWithKakao,
+                  size: 72,
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Row(
@@ -86,19 +127,14 @@ class _LoginScreenState extends State<LoginScreen> {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(
-            color: Color(0xFF58B721)
-        ),
+        labelStyle: const TextStyle(color: Color(0xFF58B721)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-              color: Color(0xFF58B721)
-          ),
+          borderSide: const BorderSide(color: Color(0xFF58B721)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFF58B721)
-          ),
+          borderSide: const BorderSide(color: Color(0xFF58B721)),
         ),
         suffixIcon: isPassword
             ? IconButton(
@@ -110,6 +146,26 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         )
             : null,
+      ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required String assetPath,
+    required VoidCallback onTap,
+    double size = 20,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: Image.asset(assetPath),
       ),
     );
   }

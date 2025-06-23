@@ -6,10 +6,14 @@ import 'package:flutter/services.dart';
 
 import 'screens/login/login_screen.dart';
 import 'screens/main_screen.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao; // ✅ kakao만 네임스페이스 설정
+import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  KakaoSdk.init(nativeAppKey: '1234567890abcdef');
 
   // Firebase App Check 활성화
   await FirebaseAppCheck.instance.activate(

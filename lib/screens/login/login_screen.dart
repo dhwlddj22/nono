@@ -92,12 +92,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 _buildSocialButton(
                   assetPath: 'assets/google_logo.png',
                   onTap: _loginWithGoogle,
-                  size: 72,
+                  size: 50,
                 ),
                 _buildSocialButton(
                   assetPath: 'assets/kakao_logo.png',
                   onTap: _loginWithKakao,
-                  size: 72,
+                  size: 50,
                 ),
               ],
             ),
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildSocialButton({
     required String assetPath,
     required VoidCallback onTap,
-    double size = 20,
+    double size =5,
   }) {
     return GestureDetector(
       onTap: onTap,

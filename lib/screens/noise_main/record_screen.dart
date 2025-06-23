@@ -177,12 +177,7 @@ class RecordScreenState extends State<RecordScreen> {
 
     Navigator.pop(context); // Close loading
 
-    _showLoadingDialog(isSuccess: true, width: 200, height: 200); // Show success animation
-    await Future.delayed(const Duration(seconds: 3));
-
-
     if (mounted) {
-      Navigator.pop(context); // Close success animation
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -190,6 +185,7 @@ class RecordScreenState extends State<RecordScreen> {
         ),
       );
     }
+
     setState(() {
       _isRecording = false;
       _decibelValues.clear();

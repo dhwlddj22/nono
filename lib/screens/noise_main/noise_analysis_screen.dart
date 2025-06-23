@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nono/screens/noise_main/chat_history_screen.dart';
-import "package:nono/screens/noise_main/message.dart";
 import 'package:nono/screens/noise_main/chat_bubble.dart';
-import 'openai_service.dart';
-import 'my_page/my_page_screen.dart';
+import 'package:nono/screens/noise_main/message.dart';
+import 'package:nono/screens/noise_main/my_page/my_page_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'openai_service.dart';
 
 class NoiseAnalysisChatScreen extends StatefulWidget {
   final String? initialInput;
@@ -46,29 +44,18 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
         .orderBy('timestamp', descending: true)
         .get();
 
-    final messages = snapshot.docs.map((doc) {
-      final data = doc.data();
-      return Message.fromFirestore(data);
-    }).toList();
+    final messages = snapshot.docs.map((doc) => Message.fromFirestore(doc.data())).toList();
 
     setState(() {
       _messages.clear();
-
-      // 🔍 중복되는 "chart → 바로 아래 또 chart" 구조만 제거
       final List<Message> filtered = [];
       for (int i = 0; i < messages.length; i++) {
         final current = messages[i];
-
-        if (current.type == MessageType.chart) {
-          // 바로 다음 메시지가 또 chart라면 이건 중복 → 건너뜀
-          if (i > 0 && messages[i - 1].type == MessageType.chart) {
-            continue;
-          }
+        if (current.type == MessageType.chart && i > 0 && messages[i - 1].type == MessageType.chart) {
+          continue;
         }
-
         filtered.add(current);
       }
-
       _messages.addAll(filtered);
     });
   }
@@ -76,15 +63,10 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
   Future<void> _autoAnalyze(String text) async {
     _addMessage(text, MessageType.user);
     setState(() => _isLoading = true);
-
     final reply = await OpenAIService.analyzeNoise(text);
     _addMessage(reply ?? "AI 응답 실패", MessageType.ai);
-
     setState(() => _isLoading = false);
   }
-
-
-
 
   void _addMessage(String content, MessageType type) {
     final user = FirebaseAuth.instance.currentUser;
@@ -92,7 +74,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       content: content,
       type: type,
       timestamp: DateTime.now(),
-      chartData: null, // ✅ 무조건 null 처리
+      chartData: null,
     );
 
     if (content.trim().isNotEmpty && user != null) {
@@ -105,24 +87,18 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     }
 
     setState(() {
-      _messages.insert(0, message); // ✅ UI 렌더링에 사용되는 메시지에도 chartData 없음
+      _messages.insert(0, message);
     });
   }
 
-
-
   Future<void> _sendMessage() async {
     final userInput = _controller.text.trim();
-
     if (userInput.isNotEmpty) {
       _addMessage(userInput, MessageType.user);
       _controller.clear();
-
       setState(() => _isLoading = true);
-
       final aiReply = await OpenAIService.analyzeNoise(userInput);
       _addMessage(aiReply ?? "AI 응답 실패", MessageType.ai);
-
       setState(() => _isLoading = false);
     }
   }
@@ -137,10 +113,8 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
       try {
         await ref.putFile(file);
         final downloadUrl = await ref.getDownloadURL();
-
         _addMessage(downloadUrl, MessageType.audio);
       } catch (e) {
-        print('파일 업로드 실패: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('파일 업로드에 실패했습니다.')),
         );
@@ -148,37 +122,48 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      drawer: Drawer(
+        backgroundColor: Colors.grey[900],
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          children: [
+            const SizedBox(height: 50),
+            const Text(
+              '채팅 기록',
+              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const Divider(color: Colors.grey),
+            ..._messages
+                .where((msg) => msg.type == MessageType.user)
+                .map((msg) => ListTile(
+              title: Text(msg.content,
+                  style: const TextStyle(color: Colors.white), maxLines: 1, overflow: TextOverflow.ellipsis),
+              subtitle: Text(msg.timestamp.toString(),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            ))
+                .toList(),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: const Text("NO!SE GUARD"),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.chat),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatHistoryScreen(
-                    selectedDate: '',
-                    onExit: () {},
-                  )
-              ),
-            );
-          },
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.chat, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyPageScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MyPageScreen()));
             },
           ),
         ],
@@ -192,15 +177,7 @@ class _NoiseAnalysisChatScreenState extends State<NoiseAnalysisChatScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                return Column(
-                  crossAxisAlignment: message.type == MessageType.user
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    ChatBubble(message: message),
-
-                  ],
-                );
+                return ChatBubble(message: message);
               },
             ),
           ),

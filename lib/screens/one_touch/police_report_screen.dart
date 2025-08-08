@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PoliceReportScreen extends StatefulWidget {
   const PoliceReportScreen({super.key});
@@ -18,10 +20,32 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
   }
 
   void _handleSubmit() async {
+    if (selectedIndex == null) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final String reportType = selectedIndex == 0 ? 'sms' : 'call';
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final policeReports = userDoc.collection('policeReports');
+
+    // 기록 저장
+    await policeReports.add({
+      'type': reportType,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    // 카운트 증가
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userDoc);
+      final currentCount = (snapshot.data()?['policeCount'] ?? 0) as int;
+      transaction.set(userDoc, {'policeCount': currentCount + 1}, SetOptions(merge: true));
+    });
+
+    // 실제 동작
     if (selectedIndex == 0) {
       final Uri smsUri = Uri(scheme: 'sms', path: '112', queryParameters: {
-        'body':
-        '[층간소음 신고]\n주소: \n신고 내용: \n시간대: \n내용: \n피해 상황: ',
+        'body': '[층간소음 신고]\n주소: \n신고 내용: \n시간대: \n내용: \n피해 상황: ',
       });
       if (await canLaunchUrl(smsUri)) {
         await launchUrl(smsUri);
@@ -69,7 +93,6 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             '경찰에 신고하기',
@@ -84,19 +107,19 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
                       ),
                       const SizedBox(height: 6),
                       Row(
-                        children: [
-                          const Text(
-                            '허위 신고는 처벌될 수 있어요!',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Pretendard',
+                          children: [
+                            const Text(
+                              '허위 신고는 처벌될 수 있어요!',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Pretendard',
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Image.asset('assets/one_touch/one_touch_police/warning_icon.png', width: 14),
-                        ]
+                            const SizedBox(width: 6),
+                            Image.asset('assets/one_touch/one_touch_police/warning_icon.png', width: 14),
+                          ]
                       ),
                     ],
                   ),
@@ -107,8 +130,7 @@ class _PoliceReportScreenState extends State<PoliceReportScreen> {
             _buildSelectableCard(
               index: 0,
               title: '문자로',
-              description:
-              '층간소음 신고 문자 양식을 바탕으로\n간편하게 작성할 수 있어요.',
+              description: '층간소음 신고 문자 양식을 바탕으로\n간편하게 작성할 수 있어요.',
               example: '예시)\n주소: 서울시 ○○구 ○○동 ○○아파트 ○○동 ○○호\n신고 내용: 지속적인 층간소음 피해 발생\n시간대: 오늘 오후 8시부터 현재까지\n내용: 쿵쿵거리는 소리, 발망치, 가구 끄는 소리 반복\n피해 상황: 아기가 잠을 자지 못하고 있어 정신적으로 스트레스를 받고 있음',
               imagePath: 'assets/one_touch/one_touch_police/message.png',
             ),

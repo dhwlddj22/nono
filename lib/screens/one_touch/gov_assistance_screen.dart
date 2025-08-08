@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'counseling_screen.dart'; // 상담 신청 화면
 
 class GovAssistanceScreen extends StatefulWidget {
@@ -29,12 +31,33 @@ class _GovAssistanceScreenState extends State<GovAssistanceScreen> {
         );
         break;
       case 1:
+        await _trackGovAction('measure');
         _openUrl("https://floor.noiseinfo.or.kr/floornoise/home/complaint/mesure/nmbrCheck.do");
         break;
       case 2:
+        await _trackGovAction('form');
         _openUrl("https://floor.noiseinfo.or.kr/floornoise/home/library.do");
         break;
     }
+  }
+
+  Future<void> _trackGovAction(String type) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final govCollection = userDoc.collection('govActions');
+
+    await govCollection.add({
+      'type': type,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userDoc);
+      final currentCount = (snapshot.data()?['govCount'] ?? 0) as int;
+      transaction.set(userDoc, {'govCount': currentCount + 1}, SetOptions(merge: true));
+    });
   }
 
   Future<void> _openUrl(String url) async {

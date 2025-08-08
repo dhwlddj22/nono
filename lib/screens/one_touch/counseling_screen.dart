@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CounselingScreen extends StatefulWidget {
   const CounselingScreen({super.key});
@@ -18,6 +20,30 @@ class _CounselingScreenState extends State<CounselingScreen> {
   }
 
   void _handleStart() async {
+    if (selectedIndex == null) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final counselingHistory = userDoc.collection('counselingHistory');
+
+    final String type = selectedIndex == 0 ? 'call' : 'web';
+
+    // 1. 기록 저장
+    await counselingHistory.add({
+      'type': type,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    // 2. 카운터 증가
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userDoc);
+      final currentCount = (snapshot.data()?['counselingCount'] ?? 0) as int;
+      transaction.set(userDoc, {'counselingCount': currentCount + 1}, SetOptions(merge: true));
+    });
+
+    // 3. 실행
     if (selectedIndex == 0) {
       final Uri telUri = Uri(scheme: 'tel', path: '16612642');
       await _launchUri(telUri);
@@ -39,8 +65,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -98,9 +123,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
               ),
               child: const Text(
                 "시작하기",
-                style: TextStyle(color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ],
@@ -131,7 +154,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // 🔥 핵심!
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -149,8 +172,7 @@ class _CounselingScreenState extends State<CounselingScreen> {
                   ),
                 ),
                 Icon(
-                  isSelected ? Icons.check_circle : Icons
-                      .radio_button_unchecked,
+                  isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
                   color: isSelected ? const Color(0xFF58B721) : Colors.grey,
                 ),
               ],

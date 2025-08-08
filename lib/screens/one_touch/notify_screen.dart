@@ -45,12 +45,31 @@ class NotifyPage extends State<_ReportSelectionHome> {
 
   void _handleStart() {
     if (selectedIndex == 0) {
+      _trackCallAction();
       _connectLink("https://new.land.naver.com/complexes?ms=37.515119,126.906243,17&a=APT:PRE&e=RETAIL");
     } else if (selectedIndex == 1) {
-      _handleGovSupport(); // 🔥 튜토리얼 체크 함수
+      _handleGovSupport();
     } else if (selectedIndex == 2) {
       Navigator.of(context).pushNamed('/police');
     }
+  }
+
+  Future<void> _trackCallAction() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final callHistory = userDoc.collection('callHistory');
+
+    await callHistory.add({
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userDoc);
+      final currentCount = (snapshot.data()?['callCount'] ?? 0) as int;
+      transaction.set(userDoc, {'callCount': currentCount + 1}, SetOptions(merge: true));
+    });
   }
 
   Future<void> _handleGovSupport() async {
